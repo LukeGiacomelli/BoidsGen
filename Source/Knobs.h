@@ -22,7 +22,7 @@ public:
         rightLabels[2].setText("cohesion force", dontSendNotification);
         rightLabels[3].setText("tonality force", dontSendNotification);
 
-        leftSliders[0].setTooltip(juce::String("Field of view of these guys."));
+        leftSliders[0].setTooltip(juce::String("Range of view of these guys."));
         leftSliders[1].setTooltip(juce::String("Boids can overthink too...\t[A low value will result in boids moving slow and with caution]"));
         leftSliders[2].setTooltip(juce::String("Sustain of the generated notes, not in seconds, not in beat, let the boids cook... (can affect the perceived threshold)"));
         leftSliders[3].setTooltip(juce::String("Control the force that make boids avoid note out of the tonality"));
@@ -85,7 +85,7 @@ public:
             leftLabels[i].setBounds(leftSliders[i].getBounds().withTop(leftSliders[i].getBounds().getBottom()).withHeight(20));
         }
 
-        slidersAttachment[0].reset(new SliderAttachment(parameters, Parameters::nameBoidsView, leftSliders[0])); //
+        slidersAttachment[0].reset(new SliderAttachment(parameters, Parameters::nameBoidsView, leftSliders[0])); //range of view
         slidersAttachment[1].reset(new SliderAttachment(parameters, Parameters::nameBoidsRecklessness, leftSliders[1])); //Boids recklessness
         slidersAttachment[2].reset(new SliderAttachment(parameters, Parameters::nameSustain, leftSliders[2])); //Note sustain
         slidersAttachment[3].reset(new SliderAttachment(parameters, Parameters::nameAvoidTonality,leftSliders[3])); //Avoid non tonality

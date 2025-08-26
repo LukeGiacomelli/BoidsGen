@@ -65,7 +65,7 @@ private:
     int activeBoids = Parameters::defaultBoidsNumber;
 
     float default_speed = Parameters::defaultBoidsRecklessness;
-    float default_view = PI * Parameters::defaultBoidsView;
+    float default_view = Parameters::defaultBoidsView;
     float max_speed = Parameters::defaultBoidsMaxSpeed;
     std::vector<std::unique_ptr<Boids>> boids;
     std::vector<Boids*> neighbors;
@@ -87,6 +87,7 @@ private:
     float cohesionForce = Parameters::defaultCohesion;
     float tonalityAvoidingForce = Parameters::defaultAvoidTonality;
     float tonalityFollowingForce = Parameters::defaultFollowTonality;
+    float boidsBias = Parameters::defaultBoidsBias;
 
     String selectedScale = "Cmaj";
     float sustainReduction = Parameters::defaultSustain;

@@ -12,8 +12,8 @@ typedef AudioProcessorValueTreeState::SliderAttachment sliderAttachment;
 class BottomBar : public juce::Component
 {
 public:
-    BottomBar(AudioProcessorValueTreeState& vts, Piano* p, AdvancedMenu* am)
-        : parameters(vts), piano(p), advancedMenu(am)
+    BottomBar(AudioProcessorValueTreeState& vts, Piano* p, AdvancedMenu* am, TooltipWindow& tt)
+        : parameters(vts), piano(p), advancedMenu(am), tooltip(tt)
     {
         settings.setButtonText("Settings...");
         settings.setColour(TextButton::textColourOffId, Colours::black.withAlpha(0.6f));
@@ -43,6 +43,7 @@ public:
         settings.onClick = [this]()
             {
                 advancedMenu->setVisible(!advancedMenu->isVisible());
+                tooltip.setEnabled(!tooltip.isEnabled());
             };
 
         addAndMakeVisible(highOctave, 0);
@@ -81,6 +82,7 @@ public:
         hiOctSlider.setVisible(!hiOctSlider.isVisible());
     }
 private:
+    TooltipWindow& tooltip;
     AudioProcessorValueTreeState& parameters;
     Piano* piano;
     AdvancedMenu* advancedMenu;

@@ -3,7 +3,7 @@
 #include <JuceHeader.h>
 #include "Boids.h"
 
-#define MAX_LVL 12
+#define MAX_LVL 13
 #define CAPACITY 8
 
 class Quadtree

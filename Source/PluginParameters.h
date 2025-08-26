@@ -19,6 +19,7 @@ namespace Parameters
 	static const String nameBoidsNumber = "BN";
 	static const String nameThreshold = "TH";
 	static const String nameAutoThreshold = "ATHR";
+	static const String nameBoidsBias = "BB";
 
 	static const float defaultSeparation = 2.5f;
 	static const float defaultAlignment = 1.f;
@@ -32,10 +33,11 @@ namespace Parameters
 	static const float defaultSustain = 0.3f;
 	static const float defaultHighOctave = 4.f;
 	static const float defaultLowOctave = 2.f;
-	static const float defaultBoidsView = 1.3f;
+	static const float defaultBoidsView = 55.f;
 	static const float defaultBoidsNumber = 1000.f;
 	static const float defaultThreshold = -1.f;
 	static const bool defaultAutoThreshold = false;
+	static const bool defaultBoidsBias = 0.4f;
 
 	const StringArray scaleNames = {
 		"Cmaj",  "Cmin",
@@ -69,9 +71,10 @@ namespace Parameters
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameSustain), "sustain", NormalisableRange(0.001f, 2.f, 0.001f), defaultSustain));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameHighOctave), "high octave", NormalisableRange(-1.f, 8.f, 1.f), defaultHighOctave));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameLowOctave), "low octave", NormalisableRange(-2.f, 7.f, 1.f), defaultLowOctave));
-		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsView), "boids view", NormalisableRange(0.f, 2.f, 0.1f), defaultBoidsView));
+		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsView), "boids view", NormalisableRange(20.f, 100.f, 1.f,0.4f, false), defaultBoidsView));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsNumber), "boids number", NormalisableRange(1.f, 2500.f, 5.f), defaultBoidsNumber));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameThreshold), "threshold", NormalisableRange(1.f, 1000.f, 5.f), defaultThreshold));
+		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsBias), "boids bias", NormalisableRange(0.f, 1.f, 0.1f), defaultBoidsBias));
 		params.push_back(std::make_unique<AudioParameterBool>(ParameterID(nameAutoThreshold), "auto threshold", defaultAutoThreshold));
 
 

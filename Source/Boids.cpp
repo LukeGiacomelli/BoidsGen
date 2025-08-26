@@ -15,10 +15,11 @@
 #define default_turning_factor 0.07
 #define alpha_turn 5
 #define boids_jitter 0.2
-#define range_of_view 55
+#define fov 1.3f //Da togliere
+#define separation_range 17
 
-Boids::Boids(Rectangle<int>& s, float& default_speed_source, float& max_speed_source, float& fov_source)
-    : screenBounds(s), default_speed(default_speed_source), maxSpeed(max_speed_source), fov(fov_source)
+Boids::Boids(Rectangle<int>& s, float& default_speed_source, float& max_speed_source, float& range_source)
+    : screenBounds(s), default_speed(default_speed_source), maxSpeed(max_speed_source), range(range_source)
 {
     //Inizializzo le posizioni dei boidi
     float rnd_x = screenBounds.getX() + rnd.nextFloat() * screenBounds.getWidth();
@@ -26,7 +27,6 @@ Boids::Boids(Rectangle<int>& s, float& default_speed_source, float& max_speed_so
     position = Eigen::Vector2f(rnd_x, rnd_y);
 
     weight = 1;
-    range = range_of_view;
     colour = Colour((uint8)121, (uint8)183, (uint8)145);
     acceleration = Eigen::Vector2f(0, 0);
     velocity = Eigen::Vector2f(rnd.nextFloat() * 2 - 1, rnd.nextFloat() * 2 - 1) * default_speed;
@@ -43,8 +43,8 @@ Vector2f Boids::alignment(const std::vector<Boids*>& b)
     
     float dist;
     for (auto& a : b) {
-        dist = distance(a->getPosition(), position); //In teoria non ha più senso checkare la distanza
-        if (dist > 0 && dist <= range && inTheFov(a->getPosition(),fov)) {
+        dist = distance(a->getPosition(), position); 
+        if (dist > 0 && inTheFov(a->getPosition(), fov)) {
             avgDirection += a->getVelocity();
             avgVelocity += a->getVelocity().norm();
             ++number_of_friends;
@@ -73,7 +73,8 @@ Vector2f Boids::separation(const std::vector<Boids*>& b)
 
     for (auto& a : b) {
         auto dist = distance(a->getPosition(), position);
-        if (dist > 0 && dist < range * 0.3 && inTheFov(a->getPosition(),fov)) { 
+        if (dist > 0 && dist < separation_range && inTheFov(a->getPosition(), fov)) {
+            auto dist = distance(a->getPosition(), position);
             Vector2f diff = position - a->getPosition();
             diff.normalize();
             diff /= dist; //Divido in modo da ottenere per distanze minori diff maggiori!
@@ -102,7 +103,7 @@ Vector2f Boids::cohesion(const std::vector<Boids*>& b)
 
     for (auto& a : b) {
         auto dist = distance(a->getPosition(), position);
-        if (dist > 0 && dist < range && inTheFov(a->getPosition(), fov)) {
+        if (dist > 0 && inTheFov(a->getPosition(), fov)) {
             center_of_mass += a->getPosition();
             ++number_of_friends;
         }
@@ -171,7 +172,7 @@ Vector2f Boids::followTonality(const Vector2f pianoPosition, const std::array<St
             Vector2f aPos(pianoPosition.x() + a.getAreaBounds().getX() + (a.getAreaBounds().getWidth() / 2), pianoPosition.y() + a.getAreaBounds().getY() + (a.getAreaBounds().getHeight() / 2));
             
             auto dist = distance(aPos, position);
-            if (dist > 0 && dist < (a.getAreaBounds().getWidth() / 3) + (live ? range * 5 : range) && inTheFov(aPos, live ? 2 * PI : fov)) { //Se live range e view maggiori
+            if (dist > 0 && dist < (a.getAreaBounds().getWidth() / 3) + (live ? range * 5 : range) && inTheFov(aPos, live ? 2 * PI : fov)) { //Se live, range e view maggiori
                 if (std::find(notes.begin(), notes.end(), a.getNota().getChroma()) == notes.end()) continue;
 
                 Vector2f diff = aPos - position;
@@ -208,7 +209,7 @@ void Boids::alignementBias(float probability)
         float varX = (rnd.nextFloat() * 2.0f - 1.0f) * varAmount;
         float varY = (rnd.nextFloat() * 2.0f - 1.0f) * varAmount;
 
-        velocity += Vector2f(varX, varY);
+        velocity += limitVector(Vector2f(varX, varY) * maxSpeed);
     }
 }
 
@@ -295,20 +296,25 @@ bool Boids::borders()
 
 float Boids::angle(const Vector2f& v)
 {
-    return std::atan2(-v.y(),v.x()); //Pesante da fare ogni iterazione?
+    return std::atan2(-v.y(),v.x()); 
 }
 
-bool Boids::inTheFov(Vector2f current_position, float rangeOfView) //Da sistemare
+//bool Boids::inTheFov(Vector2f current_position, float rangeOfView) //Da sistemare
+//{
+//    auto my_front = angle(velocity);
+//    auto angle_of_collision = angle({ current_position.x() - position.x(), current_position.y() - position.y() });
+//
+//    //Differenza fra gli angoli e normalizzo per gestire il punto di wrap-around
+//    float diff = std::fabs(my_front - angle_of_collision);
+//    diff = std::fmod(diff, 2 * PI);
+//    diff = diff > PI ? 2 * PI - diff : diff;
+//
+//    return diff < rangeOfView;
+//}
+
+bool Boids::inTheFov(Vector2f current_position, float rangeOfView) //Senza controllare il fov migliorano notevolmente le prestazioni...
 {
-    auto my_front = angle(velocity);
-    auto angle_of_collision = angle({ current_position.x() - position.x(), current_position.y() - position.y() });
-
-    //Differenza fra gli angoli e normalizzo per gestire il punto di wrap-around
-    float diff = std::fabs(my_front - angle_of_collision);
-    diff = std::fmod(diff, 2 * PI);
-    diff = diff > PI ? 2 * PI - diff : diff;
-
-    return diff < rangeOfView;
+    return true;
 }
 
 Vector2f Boids::limitVector(Vector2f vector)
@@ -319,7 +325,7 @@ Vector2f Boids::limitVector(Vector2f vector)
     return vector;
 }
 
-float Boids::distance(Vector2f v1, Vector2f v2) //Potrei ritornarlo non come radice ma come quadrato, non facio sqrt!
+float Boids::distance(Vector2f v1, Vector2f v2) 
 {
     auto dx = v1.x() - v2.x();
     auto dy = v1.y() - v2.y();

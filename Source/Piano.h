@@ -23,7 +23,6 @@ public:
     Piano(int low_o, int high_o, String scale_key, MidiManager& midi, int& n_boids);
     ~Piano() {};
 
-    //std::vector<std::vector<Area>>* getAreaCollection() { return &areas_collection; }
     std::vector<std::vector<Area>>& getAreaCollection() { return areas_collection; }
     Rectangle<int> getPianoBounds() { return Rectangle<int> { lato,lato }; }
     Rectangle<int>& getPianoBoundsInTheScreen() { return pianoBoundsInTheScreen; }
@@ -78,7 +77,7 @@ private:
     String scale;
     int low_oct, high_oct;
     int numberOfNotes;
-    float areasThreshold = 0;
+    float areasThreshold = 1.f;
     bool autoThreshold = true;
     std::vector<std::vector<Area>> areas_collection;
 

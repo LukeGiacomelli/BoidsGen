@@ -10,7 +10,7 @@
 
 #include "MidiManager.h"
 
-void MidiManager::releaseResources()
+void MidiManager::releaseResources() //Non funziona perchè non viene più richiamato la processBlock!
 {
     newMidiMessage.push_back(MidiMessage::allNotesOff(1));
 }

@@ -31,7 +31,7 @@ void PianoDrawer::setAreasDrawers()
     }
 }
 
-void PianoDrawer::timerCallback() //Non c'eisogno di un aggiornamento continuo credo
+void PianoDrawer::timerCallback() 
 {
     if (secondCounter == 3) bottonePiano.setEnabled(true);
 

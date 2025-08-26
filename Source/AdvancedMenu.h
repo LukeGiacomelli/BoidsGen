@@ -8,8 +8,8 @@ typedef AudioProcessorValueTreeState::ButtonAttachment buttonAttachment;
 class AdvancedMenu : public Component
 {
 public:
-	AdvancedMenu(AudioProcessorValueTreeState& vts)
-		: parameters(vts)
+	AdvancedMenu(AudioProcessorValueTreeState& vts, TooltipWindow& tt)
+		: parameters(vts), tooltip(tt)
 	{
 		//Close button
 		Image closeImg = ImageCache::getFromMemory(BinaryData::CloseWindowicon_png, BinaryData::CloseWindowicon_pngSize);
@@ -26,6 +26,7 @@ public:
 		closeBtn.onClick = [this]()
 			{
 				this->setVisible(!this->isVisible());
+				tooltip.setEnabled(!tooltip.isEnabled());
 			};
 
 		//Hide UI button
@@ -69,6 +70,18 @@ public:
 		autoThresh.setToggleState(true, false);
 		autoThrAttachment.reset(new buttonAttachment(parameters, Parameters::nameAutoThreshold, autoThresh));
 
+		//Boids bias
+		biasSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+		biasSlider.setRotaryParameters(0.0f, MathConstants<float>::twoPi, true);
+		biasAttachment.reset(new sliderAttachment(parameters, Parameters::nameBoidsBias, biasSlider));
+
+		biasLabel.setText("Boids movements bias: ", dontSendNotification);
+		biasLabel.attachToComponent(&biasSlider, true);
+
+		//Credits
+		credits.setText("Made by Giacomelli Luca", dontSendNotification);
+		credits.setColour(Label::textColourId, Colour(50, 55, 59).withAlpha(0.7f));
+
 		addAndMakeVisible(boidsNumber, 0);
 		addAndMakeVisible(boidsNumberSlider, 0);
 		addAndMakeVisible(hideUILabel);
@@ -79,6 +92,9 @@ public:
 		addAndMakeVisible(thrSlider);
 		addAndMakeVisible(thrLabel);
 		addAndMakeVisible(autoThresh);
+		addAndMakeVisible(biasSlider);
+		addAndMakeVisible(biasLabel);
+		addAndMakeVisible(credits);
 	}
 
 	~AdvancedMenu() {};
@@ -98,20 +114,26 @@ public:
 		max_speed.setBounds(area.getX() + 270, area.getY(), 50, 25);
 		thrSlider.setBounds(area.getX() + 270, area.getY()+35, 30, 30);
 		autoThresh.setBounds(area.getX() + 310, area.getY()+38, 45, 25);
+		biasSlider.setBounds(area.getX() + 500, area.getY(), 30, 30);
+
+		credits.setBounds(area.getWidth() - 130, area.getHeight() + 10, 150, 25);
 	}
 
 	ImageButton& getHideUIButton() { return hideUI; }
 
 private:
-	Label hideUILabel, boidsNumber, maxSpeedLabel, thrLabel;
+	TooltipWindow& tooltip;
+
+	Label hideUILabel, boidsNumber, maxSpeedLabel, thrLabel, biasLabel, credits;
 	ImageButton closeBtn, hideUI;
 	ToggleButton autoThresh;
 
-	Slider boidsNumberSlider, max_speed, thrSlider;
+	Slider boidsNumberSlider, max_speed, thrSlider, biasSlider;
 
 	std::unique_ptr<sliderAttachment> bnAttachment;
 	std::unique_ptr<sliderAttachment> thrAttachment;
 	std::unique_ptr<sliderAttachment> msAttachment;
+	std::unique_ptr<sliderAttachment> biasAttachment;
 	std::unique_ptr<buttonAttachment> hideUIAttachment;
 	std::unique_ptr<buttonAttachment> autoThrAttachment;
 

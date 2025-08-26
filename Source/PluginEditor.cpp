@@ -17,7 +17,6 @@ MidiBoidsAudioProcessorEditor::MidiBoidsAudioProcessorEditor (MidiBoidsAudioProc
     addAndMakeVisible(knobsLayout);
     addAndMakeVisible(bottomMenu);
     addAndMakeVisible(advancedMenu);
-
     addAndMakeVisible(ttw);
 
     advancedMenu.setVisible(false);
@@ -25,6 +24,7 @@ MidiBoidsAudioProcessorEditor::MidiBoidsAudioProcessorEditor (MidiBoidsAudioProc
         {
             hideUI();
         };
+
 }
 
 MidiBoidsAudioProcessorEditor::~MidiBoidsAudioProcessorEditor() 

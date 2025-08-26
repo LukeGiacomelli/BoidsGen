@@ -73,7 +73,7 @@ void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
             auto followTonality = b->followTonality(pianoPosition, *notesInTonality, *areasCollection, selectedScale == "Live");
 
             //Variazioni di rotta casuale se non in un gruppo (prob)
-            if (alignment == Vector2f(0, 0)) b->alignementBias(0.4f);
+            if (alignment == Vector2f(0, 0)) b->alignementBias(boidsBias);
 
             //Se sto evitando un bordo il peso delle regole viene ridotto
             auto tempAlignmentForce = !avoiding ? alignmentForce : alignmentForce * 0.8f;
@@ -202,7 +202,7 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     }
     if (paramID == Parameters::nameBoidsView)
     {
-        default_view = PI * newValue;
+        default_view = newValue;
     }
     if (paramID == Parameters::nameBoidsNumber)
     {
@@ -215,6 +215,10 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     if (paramID == Parameters::nameAutoThreshold)
     {
         piano.useAutoThreshold(newValue);
+    }
+    if(paramID == Parameters::nameBoidsBias)
+    {
+        boidsBias = newValue;
     }
     
 }

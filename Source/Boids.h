@@ -69,8 +69,7 @@ private:
     float maxForce;
 
     float weight;
-    float& fov;
-    float range;
+    float& range;
     Colour colour;
     float size;
 
