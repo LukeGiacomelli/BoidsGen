@@ -89,7 +89,7 @@ public:
     {
         auto r = LookAndFeel_V4::getTooltipBounds(tipText, {}, parentArea);
 
-        r.setBounds(parentArea.getX(), parentArea.getBottom()-35,parentArea.getWidth(),35.f);
+        r.setBounds(parentArea.getX(), hideTooltip ? parentArea.getHeight() : parentArea.getBottom() - 35, parentArea.getWidth(), 35);
         return r;
     }
 
@@ -106,4 +106,8 @@ public:
         tl.createLayout(s, (float)width - 50);
         tl.draw(g, { (float)10, (float)2.5f, (float)width - 25, (float)height - 5});
     }
+
+    void setHideTooltip(bool hide) { hideTooltip = hide; }
+private:
+    bool hideTooltip = false;
 };

@@ -37,7 +37,7 @@ void MidiBoidsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     blockPerSecond = sr / blockSize;
     updateInterval = blockPerSecond / update_per_second;
 
-    midiManager.prepareToPlay(sampleRate, samplesPerBlock);
+    midiManager.prepareToPlay(sampleRate);
 }
 
 void MidiBoidsAudioProcessor::releaseResources()

@@ -37,7 +37,7 @@ namespace Parameters
 	static const float defaultBoidsNumber = 1000.f;
 	static const float defaultThreshold = -1.f;
 	static const bool defaultAutoThreshold = false;
-	static const bool defaultBoidsBias = 0.4f;
+	static const float defaultBoidsBias = 0.4f;
 
 	const StringArray scaleNames = {
 		"Cmaj",  "Cmin",

@@ -77,7 +77,7 @@ private:
     bool inSelectedTonality = false;
     float peso;
     float& externalThreshold;
-    float threshold;
+    float threshold = 0;
     bool& autoThreshold;
     int& numberOfBoids;
 

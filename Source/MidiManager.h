@@ -8,7 +8,7 @@ public:
 	MidiManager() {};
 	~MidiManager() {};
 
-	void prepareToPlay(double sr, int maxNumSamples) { fs = sr; }
+	void prepareToPlay(double sr) { fs = sr; }
 	void releaseResources() ;
 	void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
 	bool getNotesPressed(MidiBuffer& midiMessages, std::array<String, 7>& pressedNotes, int& noteCount);

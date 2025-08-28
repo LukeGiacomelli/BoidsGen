@@ -57,7 +57,7 @@ public:
 private:
     juce::Random rnd;
     
-    Rectangle<int>& screenBounds = Rectangle<int>();
+    Rectangle<int>& screenBounds = Rectangle<int>(); //sus
 
     float distance(Vector2f v1, Vector2f v2);
     float& default_speed;

@@ -11,7 +11,7 @@
 #include "Boids.h"
 
 #define PI 3.141592635
-#define max_force 0.8
+#define max_force 0.8f
 #define default_turning_factor 0.07
 #define alpha_turn 5
 #define boids_jitter 0.2

@@ -1,6 +1,10 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "CustomLookAndFeel.h"
+
+#define sliderMouseSens 200
+#define rotatorySliderMouseSens 200
 
 typedef AudioProcessorValueTreeState::SliderAttachment sliderAttachment;
 typedef AudioProcessorValueTreeState::ButtonAttachment buttonAttachment;
@@ -8,8 +12,8 @@ typedef AudioProcessorValueTreeState::ButtonAttachment buttonAttachment;
 class AdvancedMenu : public Component
 {
 public:
-	AdvancedMenu(AudioProcessorValueTreeState& vts, TooltipWindow& tt)
-		: parameters(vts), tooltip(tt)
+	AdvancedMenu(AudioProcessorValueTreeState& vts, CustomLookAndFeel& lf)
+		: parameters(vts), look(lf)
 	{
 		//Close button
 		Image closeImg = ImageCache::getFromMemory(BinaryData::CloseWindowicon_png, BinaryData::CloseWindowicon_pngSize);
@@ -26,7 +30,7 @@ public:
 		closeBtn.onClick = [this]()
 			{
 				this->setVisible(!this->isVisible());
-				tooltip.setEnabled(!tooltip.isEnabled());
+				look.setHideTooltip(false);
 			};
 
 		//Hide UI button
@@ -46,6 +50,8 @@ public:
 
 		//Boids number
 		boidsNumberSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+		boidsNumberSlider.setSliderSnapsToMousePosition(false);
+		boidsNumberSlider.setMouseDragSensitivity(sliderMouseSens);
 		bnAttachment.reset(new sliderAttachment(parameters, Parameters::nameBoidsNumber, boidsNumberSlider));
 
 		boidsNumber.setText("Boids number:", dontSendNotification);
@@ -53,6 +59,7 @@ public:
 
 		//Max speed
 		max_speed.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+		max_speed.setMouseDragSensitivity(sliderMouseSens);
 		msAttachment.reset(new sliderAttachment(parameters, Parameters::nameBoidsMaxSpeed, max_speed));
 
 		maxSpeedLabel.setText("Max speed: ", dontSendNotification);
@@ -61,18 +68,20 @@ public:
 		//Threshold
 		thrSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
 		thrSlider.setRotaryParameters(0.0f, MathConstants<float>::twoPi, true);
+		thrSlider.setMouseDragSensitivity(rotatorySliderMouseSens);
 		thrAttachment.reset(new sliderAttachment(parameters, Parameters::nameThreshold, thrSlider));
 
 		thrLabel.setText("Notes threshold: ", dontSendNotification);
 		thrLabel.attachToComponent(&thrSlider, true);
 
 		autoThresh.setClickingTogglesState(true);
-		autoThresh.setToggleState(true, false);
+		autoThresh.setToggleState(true, dontSendNotification);
 		autoThrAttachment.reset(new buttonAttachment(parameters, Parameters::nameAutoThreshold, autoThresh));
 
 		//Boids bias
 		biasSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
 		biasSlider.setRotaryParameters(0.0f, MathConstants<float>::twoPi, true);
+		biasSlider.setMouseDragSensitivity(rotatorySliderMouseSens);
 		biasAttachment.reset(new sliderAttachment(parameters, Parameters::nameBoidsBias, biasSlider));
 
 		biasLabel.setText("Boids movements bias: ", dontSendNotification);
@@ -80,7 +89,7 @@ public:
 
 		//Credits
 		credits.setText("Made by Giacomelli Luca", dontSendNotification);
-		credits.setColour(Label::textColourId, Colour(50, 55, 59).withAlpha(0.7f));
+		credits.setColour(Label::textColourId, Colour(50, 55, 59).brighter(0.6f));
 
 		addAndMakeVisible(boidsNumber, 0);
 		addAndMakeVisible(boidsNumberSlider, 0);
@@ -122,7 +131,7 @@ public:
 	ImageButton& getHideUIButton() { return hideUI; }
 
 private:
-	TooltipWindow& tooltip;
+	CustomLookAndFeel& look;
 
 	Label hideUILabel, boidsNumber, maxSpeedLabel, thrLabel, biasLabel, credits;
 	ImageButton closeBtn, hideUI;

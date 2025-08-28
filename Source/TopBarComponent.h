@@ -72,7 +72,7 @@ public:
     void resized() override
     {
         auto area = getLocalBounds().reduced(10);
-        const float btn_height = 40;
+        const int btn_height = 40;
 
         logo.setBounds(area.getX(), -60, 285, 190);
 

@@ -4,6 +4,7 @@
 #include "PluginParameters.h"
 #include "Piano.h"
 #include "AdvancedMenu.h"
+#include "CustomLookAndFeel.h"
 
 typedef AudioProcessorValueTreeState::SliderAttachment sliderAttachment;
 
@@ -12,8 +13,8 @@ typedef AudioProcessorValueTreeState::SliderAttachment sliderAttachment;
 class BottomBar : public juce::Component
 {
 public:
-    BottomBar(AudioProcessorValueTreeState& vts, Piano* p, AdvancedMenu* am, TooltipWindow& tt)
-        : parameters(vts), piano(p), advancedMenu(am), tooltip(tt)
+    BottomBar(AudioProcessorValueTreeState& vts, Piano* p, AdvancedMenu* am, CustomLookAndFeel& lf)
+        : parameters(vts), piano(p), advancedMenu(am), look(lf)
     {
         settings.setButtonText("Settings...");
         settings.setColour(TextButton::textColourOffId, Colours::black.withAlpha(0.6f));
@@ -43,7 +44,7 @@ public:
         settings.onClick = [this]()
             {
                 advancedMenu->setVisible(!advancedMenu->isVisible());
-                tooltip.setEnabled(!tooltip.isEnabled());
+                look.setHideTooltip(true);
             };
 
         addAndMakeVisible(highOctave, 0);
@@ -82,7 +83,7 @@ public:
         hiOctSlider.setVisible(!hiOctSlider.isVisible());
     }
 private:
-    TooltipWindow& tooltip;
+    CustomLookAndFeel& look;
     AudioProcessorValueTreeState& parameters;
     Piano* piano;
     AdvancedMenu* advancedMenu;

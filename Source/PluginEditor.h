@@ -45,8 +45,8 @@ private:
     Piano* piano = audioProcessor.getPiano();
 
     TopBarComponent menu{ parameters };
-    AdvancedMenu advancedMenu{ parameters , ttw};
-    BottomBar bottomMenu{ parameters, piano , &advancedMenu, ttw};
+    AdvancedMenu advancedMenu{ parameters , newLook};
+    BottomBar bottomMenu{ parameters, piano , &advancedMenu, newLook};
     PianoDrawer pd{ piano, menu.getPianoButton() };
     BoidsDrawer boid_scene{ audioProcessor.getBoids(), audioProcessor.getActiveBoids()};
     Knobs knobsLayout{ parameters, ttw };

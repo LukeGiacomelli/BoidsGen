@@ -22,6 +22,7 @@ MidiBoidsAudioProcessorEditor::MidiBoidsAudioProcessorEditor (MidiBoidsAudioProc
     advancedMenu.setVisible(false);
     advancedMenu.getHideUIButton().onClick = [this]()
         {
+            if (menu.isVisible()) advancedMenu.setVisible(!advancedMenu.isVisible());
             hideUI();
         };
 
