@@ -15,7 +15,6 @@
 #define default_turning_factor 0.07
 #define alpha_turn 5
 #define boids_jitter 0.2
-#define fov 1.3f //Da togliere
 #define separation_range 17
 
 Boids::Boids(Rectangle<int>& s, float& default_speed_source, float& max_speed_source, float& range_source)
@@ -44,7 +43,7 @@ Vector2f Boids::alignment(const std::vector<Boids*>& b)
     float dist;
     for (auto& a : b) {
         dist = distance(a->getPosition(), position); 
-        if (dist > 0 && inTheFov(a->getPosition(), fov)) {
+        if (dist > 0) {
             avgDirection += a->getVelocity();
             avgVelocity += a->getVelocity().norm();
             ++number_of_friends;
@@ -73,7 +72,7 @@ Vector2f Boids::separation(const std::vector<Boids*>& b)
 
     for (auto& a : b) {
         auto dist = distance(a->getPosition(), position);
-        if (dist > 0 && dist < separation_range && inTheFov(a->getPosition(), fov)) {
+        if (dist > 0 && dist < separation_range) {
             auto dist = distance(a->getPosition(), position);
             Vector2f diff = position - a->getPosition();
             diff.normalize();
@@ -103,7 +102,7 @@ Vector2f Boids::cohesion(const std::vector<Boids*>& b)
 
     for (auto& a : b) {
         auto dist = distance(a->getPosition(), position);
-        if (dist > 0 && inTheFov(a->getPosition(), fov)) {
+        if (dist > 0) {
             center_of_mass += a->getPosition();
             ++number_of_friends;
         }
@@ -135,7 +134,7 @@ Vector2f Boids::avoidNonTonality(Vector2f pianoPosition, const std::array<String
             Vector2f aPos(pianoPosition.x() + a.getAreaBounds().getX() + (a.getAreaBounds().getWidth()/2), pianoPosition.y() + a.getAreaBounds().getY() + (a.getAreaBounds().getHeight()/2));
             auto dist = distance(aPos, position);
 
-            if ((dist > 0 && dist < (a.getAreaBounds().getWidth() * 0.5) && inTheFov(aPos, fov/* * 0.5*/))) {
+            if ((dist > 0 && dist < (a.getAreaBounds().getWidth() * 0.5))) {
                 if (std::find(notes.begin(),notes.end(), a.getNota().getChroma()) != notes.end()) continue;
                 Vector2f diff = position - aPos;
                 diff.normalize();
@@ -172,7 +171,7 @@ Vector2f Boids::followTonality(const Vector2f pianoPosition, const std::array<St
             Vector2f aPos(pianoPosition.x() + a.getAreaBounds().getX() + (a.getAreaBounds().getWidth() / 2), pianoPosition.y() + a.getAreaBounds().getY() + (a.getAreaBounds().getHeight() / 2));
             
             auto dist = distance(aPos, position);
-            if (dist > 0 && dist < (a.getAreaBounds().getWidth() / 3) + (live ? range * 5 : range) && inTheFov(aPos, live ? 2 * PI : fov)) { //Se live, range e view maggiori
+            if (dist > 0 && dist < (a.getAreaBounds().getWidth() / 3) + (live ? range * 5 : range)) { //Se live, range maggiore
                 if (std::find(notes.begin(), notes.end(), a.getNota().getChroma()) == notes.end()) continue;
 
                 Vector2f diff = aPos - position;
@@ -311,11 +310,6 @@ float Boids::angle(const Vector2f& v)
 //
 //    return diff < rangeOfView;
 //}
-
-bool Boids::inTheFov(Vector2f current_position, float rangeOfView) //Senza controllare il fov migliorano notevolmente le prestazioni...
-{
-    return true;
-}
 
 Vector2f Boids::limitVector(Vector2f vector)
 {

@@ -37,6 +37,9 @@ void MidiBoidsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     blockPerSecond = sr / blockSize;
     updateInterval = blockPerSecond / update_per_second;
 
+    neighbors.clear();
+    neighbors.reserve(boids.size());
+
     midiManager.prepareToPlay(sampleRate);
 }
 
@@ -45,15 +48,15 @@ void MidiBoidsAudioProcessor::releaseResources()
     midiManager.releaseResources();
 }
 
+
 void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     buffer.clear();
     auto now = iteration_counter * (buffer.getNumSamples() / sr); //Tempo di esecuzione approssimato
 
     //Boids manager
-    if (iteration_counter % updateInterval == 0) //circa 30 aggiornamenti al secondo (da rendere vero anche per altre fs)
+    if (iteration_counter % updateInterval == 0) 
     {
-        bool avoiding = false;
         const Vector2f pianoPosition = { piano.getPianoBoundsInTheScreen().getX(), piano.getPianoBoundsInTheScreen().getY() };
 
         for (int i = 0; i < activeBoids; ++i)
@@ -61,9 +64,12 @@ void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
             auto& b = boids[i];
 
             neighbors.clear();
-            activeQt.load()->query(*b, b->getRange(), neighbors);
 
-            avoiding = b->borders();
+            auto range = b->getRange() / 2;
+            Rectangle<float> view = Rectangle<float>{ b->getPosition().x() - range, b->getPosition().y() - range, range * 2, range * 2 };
+            activeQt.load()->query(view, neighbors);
+
+            b->borders();
 
             auto separation = b->separation(neighbors);
             auto alignment = b->alignment(neighbors);
@@ -72,30 +78,25 @@ void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
             auto avoidNonTonality = b->avoidNonTonality(pianoPosition, *notesInTonality, *areasCollection);
             auto followTonality = b->followTonality(pianoPosition, *notesInTonality, *areasCollection, selectedScale == "Live");
 
-            //Variazioni di rotta casuale se non in un gruppo (prob)
-            if (alignment == Vector2f(0, 0)) b->alignementBias(boidsBias);
-
-            //Se sto evitando un bordo il peso delle regole viene ridotto
-            auto tempAlignmentForce = !avoiding ? alignmentForce : alignmentForce * 0.8f;
-            auto tempSeparationForce = !avoiding ? separationForce : separationForce * 0.6f;
-            auto tempCohesionForce = !avoiding ? cohesionForce : cohesionForce * 0.8f;
-
-            alignment *= tempAlignmentForce;    //Peso della regola
-            separation *= tempSeparationForce;
-            cohesion *= tempCohesionForce;
+            alignment *= alignmentForce;    //Peso della regola
+            separation *= separationForce;
+            cohesion *= cohesionForce;
 
             avoidNonTonality *= tonalityAvoidingForce;
             followTonality *= tonalityFollowingForce;
 
-            auto allForces = tempSeparationForce + tempAlignmentForce + tempCohesionForce;
+            //Variazioni di rotta casuale se non in un gruppo (prob)
+            if (alignment == Vector2f(0, 0)) b->alignementBias(boidsBias);
+
+            auto allForces = separationForce + alignmentForce + cohesionForce;
             b->applyForce((separation + alignment + cohesion) / (allForces ? allForces : 1));
 
             auto tonForce = tonalityAvoidingForce + tonalityFollowingForce;
             b->applyForce((avoidNonTonality + followTonality) / (tonForce ? tonForce : 1));
 
-            b->update();
+            if (iteration_counter % updateInterval * 2 == 0) b->checkForNotes(pianoPosition, *areasCollection, now);
 
-            if(iteration_counter % updateInterval*2 == 0) b->checkForNotes(pianoPosition, *areasCollection, now); 
+            b->update();
         }
 
         //Resetto le pedane
@@ -175,12 +176,11 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     {
         piano_key = newValue ? "Tonnetz" : "Chrom";
         piano.setScale(piano_key);
-        piano.updatePianoTonality(selectedScale); //Sarebbe meglio controlli la area stessa quando si crea se è in tonalità, guardando il piano
+        piano.updatePianoTonality(selectedScale);
     }
     if (paramID == Parameters::nameBoidsRecklessness)
     {
         default_speed = newValue;
-        //if (max_speed != 0) max_speed = (default_speed * 5) / 3.5f; // se aggiungo questo regolo veramente la velocità dei boidi
     }
     if (paramID == Parameters::nameBoidsMaxSpeed)
     {

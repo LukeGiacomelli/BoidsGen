@@ -24,7 +24,7 @@ public:
 	bool insert(Boids* bo);
 	void subdivide();
 	void clear();
-	void query(const Boids& searching_boid, float range, std::vector<Boids*>& b) const;
+	void query(Rectangle<float> view, std::vector<Boids*>& b) const;
 
 
 private:

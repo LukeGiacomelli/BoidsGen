@@ -8,6 +8,7 @@
 
 typedef AudioProcessorValueTreeState::SliderAttachment sliderAttachment;
 
+#define sliderMouseSens 200
 #define MAX_OCTAVE_RANGE 4
 
 class BottomBar : public juce::Component
@@ -22,6 +23,8 @@ public:
         settings.setColour(TextButton::buttonOnColourId, Colours::transparentWhite);
 
         hiOctSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+        hiOctSlider.setSliderSnapsToMousePosition(false);
+        hiOctSlider.setMouseDragSensitivity(sliderMouseSens);
         hiOctSlider.setAlwaysOnTop(true);
         hiOctSlider.setColour(Slider::trackColourId, Colours::transparentBlack);
 
@@ -30,16 +33,19 @@ public:
 
         lowOctSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
         lowOctSlider.setAlwaysOnTop(true);
+        lowOctSlider.setMouseDragSensitivity(sliderMouseSens);
+        lowOctSlider.setAlwaysOnTop(true);
         lowOctSlider.setColour(Slider::trackColourId, Colours::transparentBlack);
 
         lowOctave.setText("Low octave:", juce::dontSendNotification);
         lowOctave.attachToComponent(&lowOctSlider, true);
 
+        //Problema con il range, in alcuni casi la modifica del valore (per cambio di range) non viene notificata
         hiOctSlider.onValueChange = [this]() {
-            lowOctSlider.setRange(hiOctSlider.getValue() - MAX_OCTAVE_RANGE, hiOctSlider.getValue() - 1);
+                lowOctSlider.setRange(hiOctSlider.getValue() - MAX_OCTAVE_RANGE, hiOctSlider.getValue() - 1);
             };
         lowOctSlider.onValueChange = [this]() {
-            hiOctSlider.setRange(lowOctSlider.getValue() + 1, lowOctSlider.getValue() + MAX_OCTAVE_RANGE);
+                hiOctSlider.setRange(lowOctSlider.getValue() + 1, lowOctSlider.getValue() + MAX_OCTAVE_RANGE);
             };
         settings.onClick = [this]()
             {

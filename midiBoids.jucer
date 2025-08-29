@@ -3,7 +3,7 @@
 <JUCERPROJECT id="GgVKo1" name="midiBoids" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="1" jucerFormatVersion="1" pluginCharacteristicsValue="pluginProducesMidiOut,pluginWantsMidiIn"
               pluginManufacturer="LIM" pluginManufacturerCode="LIM!" pluginChannelConfigs="{1,1}"
-              pluginVST3Category="Generator">
+              pluginVST3Category="Generator,Instrument">
   <MAINGROUP id="xXF6G1" name="midiBoids">
     <GROUP id="{3C92B458-30B0-20FD-FE2A-16252B45A64B}" name="Source">
       <FILE id="j5Bywk" name="QuadtreeThread.h" compile="0" resource="0"

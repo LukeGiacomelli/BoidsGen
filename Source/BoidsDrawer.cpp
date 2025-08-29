@@ -10,12 +10,12 @@
 
 #include "BoidsDrawer.h"
 
-#define boid_size 7.5f
-
 BoidsDrawer::BoidsDrawer(std::vector<std::unique_ptr<Boids>>& b, int& _activeBoids)
     : activeBoids(_activeBoids)
 {
     boidImage = juce::ImageCache::getFromMemory(BinaryData::boid_png, BinaryData::boid_pngSize);
+    boidImage = boidImage.rescaled(b[0]->getSize(), b[0]->getSize(), Graphics::lowResamplingQuality);
+
     for (auto& e: b ) 
         boids.push_back(e.get()); 
 }
@@ -24,9 +24,8 @@ void BoidsDrawer::paint(Graphics& g)
 {
     for (int i = 0; i < activeBoids; ++i) 
     {
-        //g.setColour(b->getColour());
-        //g.fillEllipse(b->getPosition().x(), b->getPosition().y(), boid_size, boid_size);
-        g.drawImage(boidImage,Rectangle<float>{ boids[i]->getPosition().x(), boids[i]->getPosition().y(), boids[i]->getSize(), boids[i]->getSize()});
+        //g.setColour(boids[i]->getColour());
+        g.drawImageAt(boidImage,boids[i]->getPosition().x(), boids[i]->getPosition().y(),false);
     }
 }
 

@@ -4,7 +4,7 @@
 #include "CustomLookAndFeel.h"
 
 #define sliderMouseSens 200
-#define rotatorySliderMouseSens 200
+#define rotatorySliderMouseSens 100
 
 typedef AudioProcessorValueTreeState::SliderAttachment sliderAttachment;
 typedef AudioProcessorValueTreeState::ButtonAttachment buttonAttachment;

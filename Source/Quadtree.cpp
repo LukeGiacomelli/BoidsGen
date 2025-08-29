@@ -73,9 +73,8 @@ void Quadtree::clear() {
 }
 
 
-void Quadtree::query(const Boids& searching_boid, float range, std::vector<Boids*>& n) const
+void Quadtree::query(Rectangle<float> view, std::vector<Boids*>& n) const
 {
-    Rectangle<float>& view = Rectangle<float>{searching_boid.getPosition().x() - range/2, searching_boid.getPosition().y() - range/2, range, range};
 
     if (!bounds.intersectRectangle(view)) return;
 
@@ -88,10 +87,10 @@ void Quadtree::query(const Boids& searching_boid, float range, std::vector<Boids
     //Se ha suddivisioni cerco anche nei figli
     if(divided)
     {
-        one->query(searching_boid, range, n);
-        two->query(searching_boid, range, n);
-        three->query(searching_boid, range, n);
-        four->query(searching_boid, range, n);
+        one->query(view, n);
+        two->query(view, n);
+        three->query(view, n);
+        four->query(view, n);
     }
 }
 
