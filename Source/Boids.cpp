@@ -122,7 +122,7 @@ Vector2f Boids::cohesion(const std::vector<Boids*>& b)
     return steer;
 }
 
-Vector2f Boids::avoidNonTonality(Vector2f pianoPosition, const std::array<String,7>& notes, const std::vector<std::vector<Area>>& aree)
+Vector2f Boids::avoidNonTonality(Vector2f pianoPosition, const std::array<String,8>& notes, const std::vector<std::vector<Area>>& aree)
 {
     Vector2f steer(0, 0);
     int number_of_collision = 0;
@@ -159,11 +159,14 @@ Vector2f Boids::avoidNonTonality(Vector2f pianoPosition, const std::array<String
     return steer;
 }
 
-Vector2f Boids::followTonality(const Vector2f pianoPosition, const std::array<String, 7>& notes, const std::vector<std::vector<Area>>& aree, bool live)
+Vector2f Boids::followTonality(const Vector2f pianoPosition, const std::array<String, 8>& notes, const std::vector<std::vector<Area>>& aree, String scaleName)
 {
     Vector2f nearest_area{0,0};
     auto nearest_area_dist = 10000.f;
     String nearest_area_chroma = "";
+
+    const int tonic = 0;
+    const int dominant = scaleName == "Major" || scaleName == "Minor" ? 4 : tonic; // La dominante ha senso solo con maj e min
 
     for (const auto& c : aree) {
         for (const auto& a : c) {
@@ -171,11 +174,11 @@ Vector2f Boids::followTonality(const Vector2f pianoPosition, const std::array<St
             Vector2f aPos(pianoPosition.x() + a.getAreaBounds().getX() + (a.getAreaBounds().getWidth() / 2), pianoPosition.y() + a.getAreaBounds().getY() + (a.getAreaBounds().getHeight() / 2));
             
             auto dist = distance(aPos, position);
-            if (dist > 0 && dist < (a.getAreaBounds().getWidth() / 3) + (live ? range * 5 : range)) { //Se live, range maggiore
+            if (dist > 0 && dist < (a.getAreaBounds().getWidth() / 3) + (scaleName == "Live" ? range * 5 : range)) { //Se live, range maggiore
                 if (std::find(notes.begin(), notes.end(), a.getNota().getChroma()) == notes.end()) continue;
 
                 Vector2f diff = aPos - position;
-                dist /= a.getNota().getChroma() == notes[0] ? 2.5 : a.getNota().getChroma() == notes[4] ? 1.5 : 1; //Se è la tonica (o dominante) aumento il peso
+                dist /= a.getNota().getChroma() == notes[tonic] ? 2.5 : a.getNota().getChroma() == notes[dominant] ? 1.5 : 1; //Se è la tonica (o dominante) aumento il peso
                 if (dist < nearest_area_dist)  
                 {
                     nearest_area_dist = dist;
@@ -191,7 +194,7 @@ Vector2f Boids::followTonality(const Vector2f pianoPosition, const std::array<St
         nearest_area *= maxSpeed;
         nearest_area -= velocity;
         nearest_area *= nearest_area_dist;
-        nearest_area *= nearest_area_chroma == notes[0] ? 5 : nearest_area_chroma == notes[4] ? 3 : 1; //Fattore moltiplicativo per tonica e dominante
+        nearest_area *= nearest_area_chroma == notes[tonic] ? 5 : nearest_area_chroma == notes[dominant] ? 3 : 1; //Fattore moltiplicativo per tonica e dominante
         nearest_area = limitVector(nearest_area);
     }
 

@@ -59,6 +59,7 @@ public:
 
 		//Max speed
 		max_speed.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+		max_speed.setSliderSnapsToMousePosition(false);
 		max_speed.setMouseDragSensitivity(sliderMouseSens);
 		msAttachment.reset(new sliderAttachment(parameters, Parameters::nameBoidsMaxSpeed, max_speed));
 

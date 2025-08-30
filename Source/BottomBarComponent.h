@@ -8,7 +8,7 @@
 
 typedef AudioProcessorValueTreeState::SliderAttachment sliderAttachment;
 
-#define sliderMouseSens 200
+#define sliderMouseSens 60
 #define MAX_OCTAVE_RANGE 4
 
 class BottomBar : public juce::Component
@@ -32,7 +32,7 @@ public:
         highOctave.attachToComponent(&hiOctSlider,true);
 
         lowOctSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
-        lowOctSlider.setAlwaysOnTop(true);
+        lowOctSlider.setSliderSnapsToMousePosition(false);
         lowOctSlider.setMouseDragSensitivity(sliderMouseSens);
         lowOctSlider.setAlwaysOnTop(true);
         lowOctSlider.setColour(Slider::trackColourId, Colours::transparentBlack);

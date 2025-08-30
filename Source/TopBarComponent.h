@@ -54,8 +54,15 @@ public:
         auto i = 0;
         for (auto& s : Parameters::scaleNames) scalesBox.addItem(s, ++i);
         addAndMakeVisible(scalesBox);
-        scalesBox.setText("Cmajor", juce::dontSendNotification);
+        scalesBox.setText("Major", juce::dontSendNotification);
         scalesBox.setJustificationType(juce::Justification::centred);
+        scalesBox.setTooltip(String("With the 'Live' scale/mode boids will follow your MIDI input"));
+
+        i = 0;
+        for (auto& s : Parameters::notes) notesBox.addItem(s, ++i);
+        addAndMakeVisible(notesBox);
+        notesBox.setText("C", juce::dontSendNotification);
+        notesBox.setJustificationType(juce::Justification::centred);
 
         addAndMakeVisible(pianoButton);
         pianoButton.setButtonText("Tonnetz");
@@ -78,25 +85,33 @@ public:
 
         auto center_of_area = 260 + area.getWidth() / 2;
         previousButton.setBounds(center_of_area - 305, area.getHeight() / 2 - (btn_height / 4), 60, btn_height);
-        scalesBox.setBounds(center_of_area - 250, area.getHeight() / 2 - (btn_height / 4), 500, btn_height);
+        notesBox.setBounds(center_of_area - 250, area.getHeight() / 2 - (btn_height / 4), 60, btn_height);
+        scalesBox.setBounds(center_of_area - 180, area.getHeight() / 2 - (btn_height / 4), 430, btn_height);
         nextButton.setBounds(center_of_area + 245, area.getHeight() / 2 - (btn_height / 4), 60, btn_height);
         
         pianoButton.setBounds(area.getWidth() - 70, area.getHeight() / 2 - (btn_height / 4), 70, btn_height);
 
-        comboAttachment.reset(new ComboAttachment(parameters, Parameters::nameSelectedScale, scalesBox));
+        notesAttachment.reset(new ComboAttachment(parameters, Parameters::nameSelectedTonic, notesBox));
+        scaleAttachment.reset(new ComboAttachment(parameters, Parameters::nameSelectedScale, scalesBox));
         pianoButtonAttachment.reset(new ButtonAttachment(parameters, Parameters::nameSelectedPiano, pianoButton));
-        
-        previousButton.onClick = [this]() 
+
+        previousButton.onClick = [this]()
             {
-                auto newValue = scalesBox.getSelectedItemIndex() == 0 ? scalesBox.getNumItems() - 1 : scalesBox.getSelectedItemIndex() - 1;
-                scalesBox.setSelectedItemIndex(newValue);
+                auto newValue = notesBox.getSelectedItemIndex() == 0 ? notesBox.getNumItems() - 1 : notesBox.getSelectedItemIndex() - 1;
+                notesBox.setSelectedItemIndex(newValue);
             };
         nextButton.onClick = [this]() 
             {
-                scalesBox.setSelectedItemIndex(scalesBox.getSelectedItemIndex() + 1);
+                notesBox.setSelectedItemIndex(notesBox.getSelectedItemIndex() + 1);
             };
         
-
+        scalesBox.onChange = [this]()
+            {
+                if (Parameters::scaleNames[scalesBox.getSelectedItemIndex()] == "Live")
+                    notesBox.setEnabled(false);
+                else
+                    notesBox.setEnabled(true);
+            };
     }
 
     ToggleButton& getPianoButton()
@@ -110,10 +125,10 @@ private:
     ImageButton nextButton, previousButton;
     ToggleButton pianoButton;
 
-    std::unique_ptr<ComboAttachment> comboAttachment;
+    std::unique_ptr<ComboAttachment> scaleAttachment, notesAttachment;
     std::unique_ptr<ButtonAttachment> pianoButtonAttachment;
 
-    ComboBox scalesBox;
+    ComboBox scalesBox, notesBox;
     ImageComponent logo;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TopBarComponent)

@@ -26,8 +26,8 @@ public:
     Vector2f alignment(const std::vector<Boids*>& b);
     Vector2f separation(const std::vector<Boids*>& b);
     Vector2f cohesion(const std::vector<Boids*>& b);
-    Vector2f avoidNonTonality(const Vector2f pianoPosition,const std::array<String,7>& notes, const std::vector<std::vector<Area>>& aree);
-    Vector2f followTonality(const Vector2f pianoPosition,const std::array<String,7>& notes, const std::vector<std::vector<Area>>& aree, bool live);
+    Vector2f avoidNonTonality(const Vector2f pianoPosition,const std::array<String,8>& notes, const std::vector<std::vector<Area>>& aree);
+    Vector2f followTonality(const Vector2f pianoPosition,const std::array<String,8>& notes, const std::vector<std::vector<Area>>& aree, String scaleName);
     void alignementBias(const float probability);
     void checkForNotes(const Vector2f pianoPosition, std::vector<std::vector<Area>>& aree, float now);
     

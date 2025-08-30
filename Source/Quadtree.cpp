@@ -17,7 +17,9 @@ bool Quadtree::insert(Boids* bo)
 
     if (boids.size() < capacity || depth >= MAX_LVL)
     {
+
         boids.push_back(bo);
+
     }
     else
     {

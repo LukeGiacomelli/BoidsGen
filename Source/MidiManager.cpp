@@ -15,7 +15,7 @@ void MidiManager::releaseResources() //Non funziona perchè non viene più richiam
     newMidiMessage.push_back(MidiMessage::allNotesOff(1));
 }
 
-bool MidiManager::getNotesPressed(MidiBuffer& midiMessages, std::array<String, 7>& pressedNotes, int& noteCount)
+bool MidiManager::getNotesPressed(MidiBuffer& midiMessages, std::array<String, 8>& pressedNotes, int& noteCount)
 {
     bool toUpdate = false;
 

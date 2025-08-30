@@ -8,8 +8,8 @@ typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 class Knobs : public Component 
 {
 public:
-	Knobs(AudioProcessorValueTreeState& vts, TooltipWindow& _ttw)
-        : parameters(vts), ttw(_ttw)
+	Knobs(AudioProcessorValueTreeState& vts)
+        : parameters(vts)
     {
         //leftLabels[0].setText("boids velocity", dontSendNotification);
         leftLabels[0].setText("boids view", dontSendNotification);
@@ -37,11 +37,11 @@ public:
         {
             leftLabels[i].setJustificationType(Justification::centred);
             leftSliders[i].setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-            leftSliders[i].setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+            leftSliders[i].setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 
             rightLabels[i].setJustificationType(Justification::centred);
             rightSliders[i].setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-            rightSliders[i].setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+            rightSliders[i].setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
             
             addAndMakeVisible(leftLabels[i]);
             addAndMakeVisible(rightLabels[i]);
@@ -95,7 +95,6 @@ public:
         slidersAttachment[7].reset(new SliderAttachment(parameters, Parameters::nameFollowTonality, rightSliders[3])); //Tonality
     }
 private: 
-    TooltipWindow& ttw;
 
     std::array<Slider,4> leftSliders;
     std::array<Slider,4> rightSliders;

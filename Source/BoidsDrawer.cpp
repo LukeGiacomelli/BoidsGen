@@ -14,7 +14,7 @@ BoidsDrawer::BoidsDrawer(std::vector<std::unique_ptr<Boids>>& b, int& _activeBoi
     : activeBoids(_activeBoids)
 {
     boidImage = juce::ImageCache::getFromMemory(BinaryData::boid_png, BinaryData::boid_pngSize);
-    boidImage = boidImage.rescaled(b[0]->getSize(), b[0]->getSize(), Graphics::lowResamplingQuality);
+    boidImage = boidImage.rescaled(b[0]->getSize(), b[0]->getSize(), Graphics::mediumResamplingQuality);
 
     for (auto& e: b ) 
         boids.push_back(e.get()); 

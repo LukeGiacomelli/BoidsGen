@@ -15,7 +15,7 @@ using namespace Eigen;
 #define number_of_boids 2500
 #define start_octave 2
 #define last_octave 3
-#define plain_key "Chrom" //Tonnetz or Chrom
+#define plain_layout "Chrom" //Tonnetz or Chrom
 
 class MidiBoidsAudioProcessor  : public juce::AudioProcessor, AudioProcessorValueTreeState::Listener
 {
@@ -57,8 +57,8 @@ private:
     int blockPerSecond = 0;
     int updateInterval = 3;
 
-    String piano_key = plain_key;
-    std::array<String, 7>* notesInTonality;
+    String piano_layout = plain_layout;
+    std::array<String, 8>* notesInTonality;
     int numberOfNotesPressed = 0;
     std::vector<std::vector<Area>>* areasCollection;
     int activeBoids = Parameters::defaultBoidsNumber;
@@ -68,7 +68,7 @@ private:
     float max_speed = Parameters::defaultBoidsMaxSpeed;
     std::vector<std::unique_ptr<Boids>> boids;
     std::vector<Boids*> neighbors;
-    Piano piano{ start_octave,last_octave,piano_key,midiManager, activeBoids};
+    Piano piano{ start_octave,last_octave,piano_layout,midiManager, activeBoids};
 
     //Quadtree
     Quadtree qt{ Rectangle<float>{0.f, 0.f, static_cast<float>(piano.getScreen().getX()), static_cast<float>(piano.getScreen().getY())}, 0}; //Tutto schermo

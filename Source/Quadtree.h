@@ -3,7 +3,7 @@
 #include <JuceHeader.h>
 #include "Boids.h"
 
-#define MAX_LVL 13
+#define MAX_LVL 9
 #define CAPACITY 8
 
 class Quadtree
@@ -11,7 +11,10 @@ class Quadtree
 public:
 	Quadtree(Rectangle<float> b, int _depth = 0)
 		: bounds(b), depth(_depth)
-	{ }
+	{ 
+		if (depth < MAX_LVL) boids.reserve(10);
+		else boids.reserve(30);
+	}
 
 	~Quadtree() 
 	{

@@ -33,15 +33,17 @@ public:
     bool getUpdatedState() const { return updated; }
     String getScale() const { return scale; }
     std::array<String, 12> getNoteInScale() { return notes; }
-    std::array<String, 7>& getNoteInTonality() { return tonalities[currentTonality]; }
-    void updatePianoTonality(String newTonality);
+    std::array<String, 8>& getNoteInTonality() { return tonality; }
+    void setPianoScale(String newScale);
+    void setPianoTonic(int newTonic);
+    void updatePianoTonality();
     float getDeltaOffset() const { return deltaOffset; }
     float getThreshold() const { return areasThreshold; }
     bool getAutoThreshold() const { return autoThreshold; }
 
     void setUpdated(bool s) { updated = s;}
 
-    void setScale(String scale_key) 
+    void setScale(String scale_key) //Layout del piano
     { 
         scale = scale_key; 
         updatePiano();
@@ -64,6 +66,7 @@ public:
     }
     void setThreshold(float newThr) { areasThreshold = newThr; }
     void useAutoThreshold(bool autoThr) { autoThreshold = autoThr; }
+    void buildTonality(int note, String scale);
 private:
     const int lato = piano_width;
     Rectangle<int> pianoBoundsInTheScreen{};
@@ -73,7 +76,8 @@ private:
     void updatePiano();
     void resetPiano();
 
-    String currentTonality = "Cmaj";
+    String currentScale = "Major";
+    int currentTonic = 0; //C
     String scale;
     int low_oct, high_oct;
     int numberOfNotes;
@@ -83,37 +87,48 @@ private:
 
     bool updated = true;
 
+    std::array<String, 8> tonality;
     std::array<String, 12> notes = { "C", "C#", "D", "D#","E", "F", "F#", "G", "G#", "A", "A#", "B" };
-    std::map<String, std::array<String, 7>> tonalities = {
-        // Scale maggiori
-        {"Cmaj",  {"C", "D", "E", "F", "G", "A", "B"}},
-        {"C#maj", {"C#", "D#", "E#", "F#", "G#", "A#", "B#"}},
-        {"Dmaj",  {"D", "E", "F#", "G", "A", "B", "C#"}},
-        {"Ebmaj", {"D#", "F", "G", "G#", "A#", "C", "D"}},
-        {"Emaj",  {"E", "F#", "G#", "A", "B", "C#", "D#"}},
-        {"Fmaj",  {"F", "G", "A", "A#", "C", "D", "E"}},
-        {"F#maj", {"F#", "G#", "A#", "B", "C#", "D#", "E#"}},
-        {"Gmaj",  {"G", "A", "B", "C", "D", "E", "F#"}},
-        {"Abmaj", {"G#", "A#", "C", "C#", "D#", "F", "G"}},
-        {"Amaj",  {"A", "B", "C#", "D", "E", "F#", "G#"}},
-        {"Bbmaj", {"A#", "C", "D", "D#", "F", "G", "A"}},
-        {"Bmaj",  {"B", "C#", "D#", "E", "F#", "G#", "A#"}},
-
-        // Scale minori naturali
-        {"Cmin",  {"C", "D", "D#", "F", "G", "G#", "A#"}},
-        {"C#min", {"C#", "D#", "E", "F#", "G#", "A", "B"}},
-        {"Dmin",  {"D", "E", "F", "G", "A", "A#", "C"}},
-        {"Ebmin", {"D#", "F", "F#", "G#", "A#", "B", "C#"}},
-        {"Emin",  {"E", "F#", "G", "A", "B", "C", "D"}},
-        {"Fmin",  {"F", "G", "G#", "A#", "C", "C#", "D#"}},
-        {"F#min", {"F#", "G#", "A", "B", "C#", "D", "E"}},
-        {"Gmin",  {"G", "A", "A#", "C", "D", "D#", "F"}},
-        {"Abmin", {"G#", "A#", "B", "C#", "D#", "E", "F#"}},
-        {"Amin",  {"A", "B", "C", "D", "E", "F", "G"}},
-        {"Bbmin", {"A#", "C", "C#", "D#", "F", "F#", "G#"}},
-        {"Bmin",  {"B", "C#", "D", "E", "F#", "G", "A"}},
-
-        //Live tonality
+    std::map<String, std::vector<int>> SCALE_PATTERNS = {
+        {"Major", {2,2,1,2,2,2,1}},
+        {"Major 7th", {4,3,4,1}},
+        {"Major Dominant", {4,3,3,2}},
+        {"Major 6th", {4,3,2,3}},
+        {"Major Augmented", {2,2,1,3,1,2,1}},
+        {"Minor", {2,1,2,2,1,2,2}},
+        {"Minor 7th", {3,4,3,2}},
+        {"Minor Major 7th", {3,4,4,1}},
+        {"Minor 6th", {3,4,2,3}},
+        {"Blues", {3,2,1,1,3,2}},
+        {"Dorian", {2,1,2,2,2,1,2}},
+        {"Mixolydian", {2,2,1,2,2,1,2}},
+        {"Phrygian", {1,2,2,2,1,2,2}},
+        {"Lydian", {2,2,2,1,2,2,1}},
+        {"Locrian", {1,2,2,1,2,2,2}},
+        {"Harmonic Minor", {2,1,2,2,1,3,1}},
+        {"Melodic Minor", {2,1,2,2,2,2,1}},
+        {"Pentatonic Neutral", {2,3,2,3,2}},
+        {"Pentatonic Minor", {3,2,2,3,2}},
+        {"Pentatonic Major", {2,2,3,2,3}},
+        {"Dim Half", {1,2,1,2,1,2,1,2}},
+        {"Dim Whole", {2,1,2,1,2,1,2,1}},
+        {"Augmented", {3,1,3,1,3,1}},
+        {"Roumanian Minor", {2,1,3,1,2,1,2}},
+        {"Spanish - Gypsy", {1,3,1,2,1,2,2}},
+        {"Double Harmonic", {1,3,1,2,1,3,1}},
+        {"Eight-Tone Spanish", {1,2,1,1,1,2,2,2}},
+        {"Enigmatic", {1,3,2,2,2,1,1}},
+        {"Algerian", {2,1,3,1,1,2,2}},
+        {"Balinese", {1,2,4,1,4}},
+        {"Hirajoshi", {2,1,4,1,4}},
+        {"Hungarian Gypsy", {2,1,3,1,1,3,1}},
+        {"Japanese", {1,4,2,1,4}},
+        {"Persian", {1,3,1,1,2,3,1}},
+        {"Prometheus", {2,2,2,3,1,2}},
+        {"Six-Tone Symetrical", {2,1,2,1,2,4}},
+        {"Super Locrian", {1,2,1,2,2,2,2}},
+        {"Wholetone", {2,2,2,2,2,2}},
+        {"Half Diminished", {2,1,2,1,2,2,2}},
         {"Live", {}}
     };
 };

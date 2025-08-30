@@ -49,7 +49,7 @@ private:
     BottomBar bottomMenu{ parameters, piano , &advancedMenu, newLook};
     PianoDrawer pd{ piano, menu.getPianoButton() };
     BoidsDrawer boid_scene{ audioProcessor.getBoids(), audioProcessor.getActiveBoids()};
-    Knobs knobsLayout{ parameters, ttw };
+    Knobs knobsLayout{ parameters};
 
     void hideUI();
 

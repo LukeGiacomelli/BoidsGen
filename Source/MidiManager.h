@@ -8,10 +8,15 @@ public:
 	MidiManager() {};
 	~MidiManager() {};
 
-	void prepareToPlay(double sr) { fs = sr; }
+	void prepareToPlay(double sr) 
+	{ 
+		fs = sr;
+		newMidiMessage.reserve(40);
+	}
+
 	void releaseResources() ;
 	void processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages);
-	bool getNotesPressed(MidiBuffer& midiMessages, std::array<String, 7>& pressedNotes, int& noteCount);
+	bool getNotesPressed(MidiBuffer& midiMessages, std::array<String, 8>& pressedNotes, int& noteCount);
 
 	void addNote(double midiNumber, bool note_on, float vel);
 

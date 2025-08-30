@@ -76,7 +76,7 @@ void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
             auto cohesion = b->cohesion(neighbors);
 
             auto avoidNonTonality = b->avoidNonTonality(pianoPosition, *notesInTonality, *areasCollection);
-            auto followTonality = b->followTonality(pianoPosition, *notesInTonality, *areasCollection, selectedScale == "Live");
+            auto followTonality = b->followTonality(pianoPosition, *notesInTonality, *areasCollection, selectedScale);
 
             alignment *= alignmentForce;    //Peso della regola
             separation *= separationForce;
@@ -116,7 +116,7 @@ void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     {
         auto toUpdate = midiManager.getNotesPressed(midiMessages, *notesInTonality, numberOfNotesPressed);
         if (toUpdate)
-            piano.updatePianoTonality(selectedScale);
+            piano.updatePianoTonality();
     }
 
     midiManager.processBlock(buffer, midiMessages);
@@ -169,14 +169,21 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     if (paramID == Parameters::nameSelectedScale)
     {
         selectedScale = Parameters::scaleNames[(int)newValue];
-        piano.updatePianoTonality(selectedScale); //Scale = tonalità :)
+        piano.setPianoScale(selectedScale);
+        piano.updatePianoTonality();
+        notesInTonality = &piano.getNoteInTonality();
+    }
+    if (paramID == Parameters::nameSelectedTonic)
+    {
+        piano.setPianoTonic(newValue);
+        piano.updatePianoTonality();
         notesInTonality = &piano.getNoteInTonality();
     }
     if(paramID == Parameters::nameSelectedPiano)
     {
-        piano_key = newValue ? "Tonnetz" : "Chrom";
-        piano.setScale(piano_key);
-        piano.updatePianoTonality(selectedScale);
+        piano_layout = newValue ? "Tonnetz" : "Chrom";
+        piano.setScale(piano_layout);
+        piano.updatePianoTonality();
     }
     if (paramID == Parameters::nameBoidsRecklessness)
     {
@@ -193,12 +200,12 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     if(paramID == Parameters::nameHighOctave)
     {
         piano.setHighOct(newValue);
-        piano.updatePianoTonality(selectedScale);
+        piano.updatePianoTonality();
     }
     if (paramID == Parameters::nameLowOctave)
     {
         piano.setLowOct(newValue);
-        piano.updatePianoTonality(selectedScale);
+        piano.updatePianoTonality();
     }
     if (paramID == Parameters::nameBoidsView)
     {

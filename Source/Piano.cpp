@@ -31,7 +31,8 @@ Piano::Piano(int low_o, int high_o, String scale_key, MidiManager& midi, int& n_
     areas_collection.resize(num_of_rows, std::vector<Area>(num_of_rows, Area("/", low_oct, 0, midi, n_boids, areasThreshold, autoThreshold))); //Inizializzo
 
     updatePiano();
-    updatePianoTonality(currentTonality);
+    buildTonality(currentTonic, currentScale);
+    updatePianoTonality();
 }
 
 void Piano::updatePiano()
@@ -118,23 +119,43 @@ void Piano::resetPiano()
             a.setAreaBounds(-100, -100, 0, 0); //Se non utilizzata la posiziono fuori dall schermo e con dimensioni nulle
         }
 }
-
-void Piano::updatePianoTonality(String newTonality)
+void Piano::setPianoScale(String newScale)
 {
-    currentTonality = newTonality;
-
-    auto ton = tonalities[currentTonality];
+    currentScale = newScale;
+    buildTonality(currentTonic, currentScale);
+}
+void Piano::setPianoTonic(int newTonic) 
+{ 
+    currentTonic = newTonic; 
+    buildTonality(currentTonic, currentScale);
+}
+void Piano::updatePianoTonality()
+{
     for (auto& r : areas_collection)
     {
         for (auto& a : r)
         {
             //Se a.nota è nella scala selezionata la setto come presente
-            auto in = std::find(ton.begin(), ton.end(), a.getNota().getChroma()) != ton.end();
+            auto in = std::find(tonality.begin(), tonality.end(), a.getNota().getChroma()) != tonality.end();
             a.setInSelectedTonality(in);
         }
     }
 }
 
+
+void Piano::buildTonality(int note, String scale)
+{
+    for (auto& s : tonality) s = ""; //clear di tonality
+
+    auto note_index = note;
+    if (scale != "Live") tonality[0] = notes[note];
+
+    for (int i = 1; i < SCALE_PATTERNS[scale].size(); i++)
+    {
+        note_index = (note_index + SCALE_PATTERNS[scale][i - 1]) % notes.size(); //Pesco la nota al corrispettivo intervallo
+        tonality[i] = notes[note_index]; 
+    }
+}
 
 void Piano::updatePianoBoundsInTheScreen(int cols, float cellWidth, float deltaOffset)
 {
