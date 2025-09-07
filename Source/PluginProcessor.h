@@ -78,8 +78,10 @@ private:
 
     MidiManager midiManager;
 
+    void resetParameters();
     void parameterChanged(const String& paramID, float newValue) override;
     AudioProcessorValueTreeState parameters;
+    ValueTree defaultParametersState;
 
     float separationForce = Parameters::defaultSeparation;
     float alignmentForce = Parameters::defaultAlignment;

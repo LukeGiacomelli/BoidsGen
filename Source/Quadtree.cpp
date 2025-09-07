@@ -12,14 +12,15 @@
 
 bool Quadtree::insert(Boids* bo)
 {
-    auto bo_position = bo->getPosition();
+    auto& bo_position = bo->getPosition();
     if (!bounds.contains(bo_position.x(), bo_position.y())) return false;
 
     if (boids.size() < capacity || depth >= MAX_LVL)
     {
+        if (boids.size() >= LEAF_OVERFLOW)
+            return false;
 
         boids.push_back(bo);
-
     }
     else
     {
@@ -32,7 +33,6 @@ bool Quadtree::insert(Boids* bo)
         else if (two->insert(bo)) return true;
         else if (three->insert(bo)) return true;
         else if (four->insert(bo)) return true;
-
     }
 
     return false;
@@ -82,6 +82,7 @@ void Quadtree::query(Rectangle<float> view, std::vector<Boids*>& n) const
 
     for (auto* b : boids) 
     {
+        if (n.size() >= 100) continue; //Ignoro qualche boide in favore delle prestazioni
         if (view.contains(b->getPosition().x(), b->getPosition().y()))
             n.push_back(b);
     }

@@ -71,13 +71,21 @@ public:
 		thrSlider.setRotaryParameters(0.0f, MathConstants<float>::twoPi, true);
 		thrSlider.setMouseDragSensitivity(rotatorySliderMouseSens);
 		thrAttachment.reset(new sliderAttachment(parameters, Parameters::nameThreshold, thrSlider));
+		thrSlider.setEnabled(!autoThresh.getToggleState());
 
 		thrLabel.setText("Notes threshold: ", dontSendNotification);
 		thrLabel.attachToComponent(&thrSlider, true);
+		thrLabel.setEnabled(!autoThresh.getToggleState());
 
 		autoThresh.setClickingTogglesState(true);
 		autoThresh.setToggleState(true, dontSendNotification);
 		autoThrAttachment.reset(new buttonAttachment(parameters, Parameters::nameAutoThreshold, autoThresh));
+		autoThresh.onClick = [this]()
+			{
+				thrSlider.setEnabled(!autoThresh.getToggleState());
+				thrLabel.setEnabled(!autoThresh.getToggleState());
+			};
+		
 
 		//Boids bias
 		biasSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -87,6 +95,24 @@ public:
 
 		biasLabel.setText("Boids movements bias: ", dontSendNotification);
 		biasLabel.attachToComponent(&biasSlider, true);
+
+		//Reset parameters
+		Image resetImg = ImageCache::getFromMemory(BinaryData::reset_png, BinaryData::reset_pngSize);
+		resetParameters.setImages(
+			false,
+			true,
+			true,
+			resetImg,
+			1.f,
+			Colour(249, 249, 249),
+			resetImg, 0.5f, Colour(249, 249, 249).withAlpha(0.5f),
+			resetImg, 0.8f, Colour(249, 249, 249).withAlpha(0.8f)
+		);
+		resetParameters.setClickingTogglesState(true);
+		resetLabel.setText("Reset parameters: ", dontSendNotification);
+		resetLabel.attachToComponent(&resetParameters, true);
+		resetLabel.setColour(Label::textColourId, Colour(50, 55, 59).brighter(0.6f));
+		resetAttachment.reset(new buttonAttachment(parameters, Parameters::nameReset, resetParameters));
 
 		//Credits
 		credits.setText("Made by Giacomelli Luca", dontSendNotification);
@@ -104,7 +130,9 @@ public:
 		addAndMakeVisible(autoThresh);
 		addAndMakeVisible(biasSlider);
 		addAndMakeVisible(biasLabel);
-		addAndMakeVisible(credits);
+		addAndMakeVisible(resetParameters);
+		addAndMakeVisible(resetLabel);
+		//addAndMakeVisible(credits);
 	}
 
 	~AdvancedMenu() {};
@@ -125,8 +153,10 @@ public:
 		thrSlider.setBounds(area.getX() + 270, area.getY()+35, 30, 30);
 		autoThresh.setBounds(area.getX() + 310, area.getY()+38, 45, 25);
 		biasSlider.setBounds(area.getX() + 500, area.getY(), 30, 30);
+		//resetParameters.setBounds(area.getX() + 500, area.getY()+35, 25, 25);
+		resetParameters.setBounds(area.getWidth() - 10, area.getHeight() + 10, 25, 25);
 
-		credits.setBounds(area.getWidth() - 130, area.getHeight() + 10, 150, 25);
+		//credits.setBounds(area.getWidth() - 130, area.getHeight() + 10, 150, 25);
 	}
 
 	ImageButton& getHideUIButton() { return hideUI; }
@@ -134,8 +164,8 @@ public:
 private:
 	CustomLookAndFeel& look;
 
-	Label hideUILabel, boidsNumber, maxSpeedLabel, thrLabel, biasLabel, credits;
-	ImageButton closeBtn, hideUI;
+	Label hideUILabel, boidsNumber, maxSpeedLabel, thrLabel, biasLabel, credits, resetLabel;
+	ImageButton closeBtn, hideUI, resetParameters;
 	ToggleButton autoThresh;
 
 	Slider boidsNumberSlider, max_speed, thrSlider, biasSlider;
@@ -144,8 +174,8 @@ private:
 	std::unique_ptr<sliderAttachment> thrAttachment;
 	std::unique_ptr<sliderAttachment> msAttachment;
 	std::unique_ptr<sliderAttachment> biasAttachment;
-	std::unique_ptr<buttonAttachment> hideUIAttachment;
 	std::unique_ptr<buttonAttachment> autoThrAttachment;
+	std::unique_ptr<buttonAttachment> resetAttachment;
 
 	AudioProcessorValueTreeState& parameters;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AdvancedMenu)

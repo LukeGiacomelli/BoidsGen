@@ -8,6 +8,7 @@ MidiBoidsAudioProcessor::MidiBoidsAudioProcessor()
     : parameters(*this, nullptr, "MB", Parameters::createParameterLayout())
 {
     Parameters::addListenerToAllParameters(parameters, this);
+    defaultParametersState = parameters.copyState();
 
     for (int i = 0; i < number_of_boids; ++i)
     {
@@ -38,7 +39,7 @@ void MidiBoidsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     updateInterval = blockPerSecond / update_per_second;
 
     neighbors.clear();
-    neighbors.reserve(boids.size());
+    neighbors.reserve(100);
 
     midiManager.prepareToPlay(sampleRate);
 }
@@ -142,6 +143,10 @@ void MidiBoidsAudioProcessor::setStateInformation(const void* data, int sizeInBy
             parameters.replaceState(ValueTree::fromXml(*xmlState));
 }
 
+void MidiBoidsAudioProcessor::resetParameters()
+{
+    parameters.replaceState(defaultParametersState.createCopy());
+}
 
 void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newValue)
 {
@@ -226,6 +231,10 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     if(paramID == Parameters::nameBoidsBias)
     {
         boidsBias = newValue;
+    }
+    if (paramID == Parameters::nameReset)
+    {
+        resetParameters();
     }
     
 }

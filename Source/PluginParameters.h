@@ -21,16 +21,17 @@ namespace Parameters
 	static const String nameThreshold = "TH";
 	static const String nameAutoThreshold = "ATHR";
 	static const String nameBoidsBias = "BB";
+	static const String nameReset = "R";
 
 	static const float defaultSeparation = 2.5f;
 	static const float defaultAlignment = 1.f;
 	static const float defaultCohesion = 1.2f;
 	static const float defaultAvoidTonality = 2.6f;
-	static const float defaultFollowTonality = 0.5f;
+	static const float defaultFollowTonality = 0.2f;
 	static const int defaultSelectedScale = 0; //Maj
 	static const int defaultSelectedTonic = 0; //C
 	static const bool defaultSelectedPiano = false; //Chrom
-	static const float defaultBoidsRecklessness = 1.5f;
+	static const float defaultBoidsRecklessness = 1.f;
 	static const float defaultBoidsMaxSpeed= 5.f;
 	static const float defaultSustain = 0.3f;
 	static const float defaultHighOctave = 4.f;
@@ -38,8 +39,9 @@ namespace Parameters
 	static const float defaultBoidsView = 60.f;
 	static const float defaultBoidsNumber = 1000.f;
 	static const float defaultThreshold = -1.f;
-	static const bool defaultAutoThreshold = false;
+	static const bool defaultAutoThreshold = true;
 	static const float defaultBoidsBias = 0.4f;
+	static const int defaultReset = 0;
 
 	const StringArray scaleNames = {
 		"Major",
@@ -99,7 +101,7 @@ namespace Parameters
 		params.push_back(std::make_unique<AudioParameterBool>(ParameterID(nameSelectedPiano), "Selected piano", defaultSelectedPiano));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsRecklessness), "boids recklessness", NormalisableRange(0.5f, 4.5f, 0.01f), defaultBoidsRecklessness));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsMaxSpeed), "boids max-speed", NormalisableRange(1.4f, 7.5f, 0.1f), defaultBoidsMaxSpeed));
-		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameSustain), "sustain", NormalisableRange(0.001f, 2.f, 0.001f), defaultSustain));
+		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameSustain), "sustain", NormalisableRange(0.001f, 2.f, 0.25f), defaultSustain));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameHighOctave), "high octave", NormalisableRange(-1.f, 8.f, 1.f), defaultHighOctave));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameLowOctave), "low octave", NormalisableRange(-2.f, 7.f, 1.f), defaultLowOctave));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsView), "boids view", NormalisableRange(40.f, 150.f, 1.f,0.8f, false), defaultBoidsView));
@@ -107,6 +109,7 @@ namespace Parameters
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameThreshold), "threshold", NormalisableRange(1.f, 1000.f, 5.f), defaultThreshold));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsBias), "boids bias", NormalisableRange(0.f, 1.f, 0.1f), defaultBoidsBias));
 		params.push_back(std::make_unique<AudioParameterBool>(ParameterID(nameAutoThreshold), "auto threshold", defaultAutoThreshold));
+		params.push_back(std::make_unique<AudioParameterBool>(ParameterID(nameReset), "reset", defaultReset));
 
 
 		return { params.begin(), params.end() };
