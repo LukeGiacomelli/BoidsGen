@@ -710,13 +710,13 @@
       </GROUP>
       <GROUP id="{184E4D12-4868-405A-5AB9-743B8C8150E8}" name="GUI">
         <GROUP id="{03162DEB-E329-D118-7241-54277131284D}" name="Images">
-          <FILE id="VKqC2F" name="boid.png" compile="0" resource="1" file="C:/Users/lgiac/Pictures/boid.png"/>
+          <FILE id="G9SMON" name="reset.png" compile="0" resource="1" file="Source/reset.png"/>
+          <FILE id="unGFr4" name="hideUI.png" compile="0" resource="1" file="Source/hideUI.png"/>
+          <FILE id="dvP5qq" name="Close-Window-icon.png" compile="0" resource="1"
+                file="Source/Close-Window-icon.png"/>
+          <FILE id="OxOdqR" name="boid.png" compile="0" resource="1" file="Source/boid.png"/>
           <FILE id="eT5GNf" name="boidsGEN.png" compile="0" resource="1" file="Source/boidsGEN.png"/>
-          <FILE id="pkNiHP" name="Close-Window-icon.png" compile="0" resource="1"
-                file="C:/Users/lgiac/Pictures/Close-Window-icon.png"/>
-          <FILE id="u4hFoW" name="hideUI.png" compile="0" resource="1" file="C:/Users/lgiac/Pictures/hideUI.png"/>
           <FILE id="AU9vNU" name="left_arrow.png" compile="0" resource="1" file="Source/left_arrow.png"/>
-          <FILE id="UoctVa" name="reset.png" compile="0" resource="1" file="C:/Users/lgiac/Pictures/reset.png"/>
           <FILE id="G8cvnf" name="right_arrow.png" compile="0" resource="1" file="Source/right_arrow.png"/>
         </GROUP>
         <FILE id="hXaO4L" name="AdvancedLookAndFeel.h" compile="0" resource="0"
