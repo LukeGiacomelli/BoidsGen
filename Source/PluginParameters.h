@@ -101,9 +101,9 @@ namespace Parameters
 		params.push_back(std::make_unique<AudioParameterBool>(ParameterID(nameSelectedPiano), "Selected piano", defaultSelectedPiano));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsRecklessness), "boids recklessness", NormalisableRange(0.5f, 4.5f, 0.01f), defaultBoidsRecklessness));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsMaxSpeed), "boids max-speed", NormalisableRange(1.4f, 7.5f, 0.1f), defaultBoidsMaxSpeed));
-		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameSustain), "sustain", NormalisableRange(0.001f, 2.f, 0.25f), defaultSustain));
+		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameSustain), "sustain", NormalisableRange(0.001f, 1.f, 0.25f), defaultSustain));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameHighOctave), "high octave", NormalisableRange(-1.f, 8.f, 1.f), defaultHighOctave));
-		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameLowOctave), "low octave", NormalisableRange(-2.f, 7.f, 1.f), defaultLowOctave));
+		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameLowOctave), "low octave", NormalisableRange(-1.f, 8.f, 1.f), defaultLowOctave));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsView), "boids view", NormalisableRange(40.f, 150.f, 1.f,0.8f, false), defaultBoidsView));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsNumber), "boids number", NormalisableRange(1.f, 2500.f, 5.f), defaultBoidsNumber));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameThreshold), "threshold", NormalisableRange(1.f, 1000.f, 5.f), defaultThreshold));

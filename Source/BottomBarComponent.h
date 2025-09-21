@@ -6,10 +6,9 @@
 #include "AdvancedMenu.h"
 #include "CustomLookAndFeel.h"
 
-typedef AudioProcessorValueTreeState::SliderAttachment sliderAttachment;
 
 #define sliderMouseSens 60
-#define MAX_OCTAVE_RANGE 4
+#define MAX_OCTAVE_RANGE 5
 
 class BottomBar : public juce::Component
 {
@@ -17,46 +16,72 @@ public:
     BottomBar(AudioProcessorValueTreeState& vts, Piano* p, AdvancedMenu* am, CustomLookAndFeel& lf)
         : parameters(vts), piano(p), advancedMenu(am), look(lf)
     {
+        //Settings
         settings.setButtonText("Settings...");
         settings.setColour(TextButton::textColourOffId, Colours::black.withAlpha(0.6f));
         settings.setColour(TextButton::buttonColourId, Colours::transparentBlack);
         settings.setColour(TextButton::buttonOnColourId, Colours::transparentWhite);
 
-        hiOctSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
-        hiOctSlider.setSliderSnapsToMousePosition(false);
-        hiOctSlider.setMouseDragSensitivity(sliderMouseSens);
-        hiOctSlider.setAlwaysOnTop(true);
-        hiOctSlider.setColour(Slider::trackColourId, Colours::transparentBlack);
+        //Octave
+        octaveSlider.setSliderStyle(Slider::SliderStyle::TwoValueHorizontal);
+        octaveSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+        octaveSlider.setRange(0, 8, 1.f);
+        octaveSlider.setSliderSnapsToMousePosition(false);
+        octaveSlider.setMouseDragSensitivity(sliderMouseSens);
+        octaveSlider.setAlwaysOnTop(true);
+        octaveSlider.setColour(Slider::trackColourId, Colours::transparentBlack);
+        octaveLabel.setText("[octave range]", juce::dontSendNotification);
+        octaveLabel.attachToComponent(&octaveSlider, true);
+        octaveLabel.setAlpha(0.0f);
+ 
 
-        highOctave.setText("|  High octave:", juce::dontSendNotification);
-        highOctave.attachToComponent(&hiOctSlider,true);
-
-        lowOctSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
-        lowOctSlider.setSliderSnapsToMousePosition(false);
-        lowOctSlider.setMouseDragSensitivity(sliderMouseSens);
-        lowOctSlider.setAlwaysOnTop(true);
-        lowOctSlider.setColour(Slider::trackColourId, Colours::transparentBlack);
-
-        lowOctave.setText("Low octave:", juce::dontSendNotification);
-        lowOctave.attachToComponent(&lowOctSlider, true);
-
-        //Problema con il range, in alcuni casi la modifica del valore (per cambio di range) non viene notificata
-        hiOctSlider.onValueChange = [this]() {
-                lowOctSlider.setRange(hiOctSlider.getValue() - MAX_OCTAVE_RANGE, hiOctSlider.getValue() - 1);
-            };
-        lowOctSlider.onValueChange = [this]() {
-                hiOctSlider.setRange(lowOctSlider.getValue() + 1, lowOctSlider.getValue() + MAX_OCTAVE_RANGE);
-            };
         settings.onClick = [this]()
             {
                 advancedMenu->setVisible(!advancedMenu->isVisible());
                 look.setHideTooltip(true);
             };
 
-        addAndMakeVisible(highOctave, 0);
-        addAndMakeVisible(lowOctave, 0);
-        addAndMakeVisible(hiOctSlider, 0);
-        addAndMakeVisible(lowOctSlider, 0);
+        auto* lowParameter = parameters.getParameter(Parameters::nameLowOctave);
+        auto* hiParameter = parameters.getParameter(Parameters::nameHighOctave);
+
+        octaveSlider.onDragStart = [this]() 
+            {
+                octaveLabel.setAlpha(0.8f);
+            };
+
+        octaveSlider.onDragEnd = [this]()
+            {
+                octaveLabel.setAlpha(0.f);
+            };
+
+        octaveSlider.onValueChange = [this, lowParameter, hiParameter]() 
+            {
+                auto lo = (float)octaveSlider.getMinValue();
+                auto hi = (float)octaveSlider.getMaxValue();
+
+                if (octaveSlider.getMaxValue() - octaveSlider.getMinValue() >= 1 && octaveSlider.getMaxValue() - octaveSlider.getMinValue() < MAX_OCTAVE_RANGE)
+                {
+                    loAttachment->setValueAsCompleteGesture(lo);
+                    hiAttachment->setValueAsCompleteGesture(hi);
+                }
+            };
+
+        loAttachment = std::make_unique <ParameterAttachment>(*lowParameter, [this, lowParameter](float newValue)
+            {
+                const auto v = lowParameter->convertFrom0to1(newValue);
+
+                if (octaveSlider.getMaxValue() - octaveSlider.getMinValue() >= 1 && octaveSlider.getMaxValue() - octaveSlider.getMinValue() < MAX_OCTAVE_RANGE)
+                    octaveSlider.setMinValue(v, dontSendNotification);
+            }, nullptr);
+        hiAttachment = std::make_unique <ParameterAttachment>(*hiParameter, [this, hiParameter](float newValue)
+            {
+                const auto v = hiParameter->convertFrom0to1(newValue);
+
+                if (octaveSlider.getMaxValue() - octaveSlider.getMinValue() >= 1 && octaveSlider.getMaxValue() - octaveSlider.getMinValue() < MAX_OCTAVE_RANGE)
+                    octaveSlider.setMaxValue(v, dontSendNotification);
+            }, nullptr);
+
+        addAndMakeVisible(octaveSlider);
         addAndMakeVisible(settings);
     }
 
@@ -69,24 +94,19 @@ public:
 
     void resized() override
     {
-        auto area = getLocalBounds().reduced(2);
+        auto area = getLocalBounds().reduced(2).translated(0,20);
  
-        settings.setBounds(area.getX()-5, area.getY(), 100, 30);
+        settings.setBounds(area.getX()-5, area.getY()-10, 120, 40);
 
-        hiOctSlider.setBounds(area.getWidth()-35, area.getY(), 25, 25);
-        hiAttachment.reset(new sliderAttachment(parameters, Parameters::nameHighOctave, hiOctSlider));
 
-        lowOctSlider.setBounds(area.getWidth() - 170, area.getY(), 25, 25);
-        loAttachment.reset(new sliderAttachment(parameters, Parameters::nameLowOctave, lowOctSlider));
+        octaveSlider.setBounds(area.getWidth() - 130, area.getY()+7, 120, 15);
 
-        lowOctSlider.setValue(piano->getLowOctave());
-        hiOctSlider.setValue(piano->getHighOctave());
+        octaveSlider.setMinAndMaxValues(piano->getLowOctave(), piano->getHighOctave(), dontSendNotification);
     }
 
     void hidePianoUI()
     {
-        lowOctSlider.setVisible(!lowOctSlider.isVisible());
-        hiOctSlider.setVisible(!hiOctSlider.isVisible());
+        octaveSlider.setVisible(!octaveSlider.isVisible());
     }
 private:
     CustomLookAndFeel& look;
@@ -94,12 +114,12 @@ private:
     Piano* piano;
     AdvancedMenu* advancedMenu;
 
-    Label highOctave, lowOctave;
-    Slider lowOctSlider, hiOctSlider;
+    Label octaveLabel;
+    Slider octaveSlider;
     TextButton settings;
 
-    std::unique_ptr<sliderAttachment> hiAttachment;
-    std::unique_ptr<sliderAttachment> loAttachment;
+    std::unique_ptr<ParameterAttachment> hiAttachment;
+    std::unique_ptr<ParameterAttachment> loAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BottomBar)
 };

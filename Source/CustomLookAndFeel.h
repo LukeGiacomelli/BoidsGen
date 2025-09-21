@@ -10,6 +10,9 @@
 #pragma once
 #include <JuceHeader.h>
 
+#define MIN_SLIDER_GAP 10 
+#define MAX_SLIDER_GAP 79 
+
 class CustomLookAndFeel : public LookAndFeel_V4
 {
 public:
@@ -31,6 +34,25 @@ public:
         setColour(Label::outlineColourId, Colours::transparentBlack);
 
         setColour(Slider::textBoxTextColourId, Colours::black.withAlpha(0.6f));
+    }
+
+    void drawLinearSlider(Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos, float maxSliderPos, Slider::SliderStyle, Slider& s) override
+    {
+        minSliderPos = maxSliderPos - minSliderPos <= MIN_SLIDER_GAP || maxSliderPos - minSliderPos > MAX_SLIDER_GAP ? safeMin : minSliderPos;
+        maxSliderPos = maxSliderPos - minSliderPos <= MIN_SLIDER_GAP || maxSliderPos - minSliderPos > MAX_SLIDER_GAP ? safeMax : maxSliderPos;
+
+        g.setColour(Colour(50, 55, 59));
+
+        g.drawLine(x, y, x, y + height);
+        g.drawLine(x + width, y, x + width, y + height);
+
+        g.fillRect(Rectangle<float>({ minSliderPos ,(float)y }, { maxSliderPos, (float)y + height }));
+
+        if(maxSliderPos - minSliderPos > MIN_SLIDER_GAP && maxSliderPos - minSliderPos < MAX_SLIDER_GAP)
+        {
+            safeMin = minSliderPos;
+            safeMax = maxSliderPos;
+        }
     }
 
     void drawRotarySlider(Graphics& g, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle, Slider& slider) override
@@ -56,7 +78,7 @@ public:
 
         // Lineetta indicatore
         float pointerLength = radius * 0.95f;
-        float pointerThickness = 4.0f;
+        float pointerThickness = 3.0f;
 
         Point<float> endPoint = centre.getPointOnCircumference(pointerLength, angle);
         Point<float> startPoint = centre.getPointOnCircumference(radius * 0.4f, angle);
@@ -110,4 +132,5 @@ public:
     void setHideTooltip(bool hide) { hideTooltip = hide; }
 private:
     bool hideTooltip = false;
+    float safeMax = 0, safeMin = 0;
 };

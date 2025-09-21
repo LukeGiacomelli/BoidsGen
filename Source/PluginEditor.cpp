@@ -49,7 +49,7 @@ void MidiBoidsAudioProcessorEditor::resized()
     pd.setBounds(piano->getPianoBoundsInTheScreen());
     boid_scene.setBounds(getBounds());
     knobsLayout.setBounds(getBounds().reduced(0, 50).translated(0, 125));
-    bottomMenu.setBounds(0, getHeight() - 30, getWidth(), 30);
+    bottomMenu.setBounds(0, getHeight() - 50, getWidth(), 50);
     advancedMenu.setBounds(getBounds().getX(), getHeight()-100, getWidth(), 100);
 }
 

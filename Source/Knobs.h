@@ -11,7 +11,6 @@ public:
 	Knobs(AudioProcessorValueTreeState& vts)
         : parameters(vts)
     {
-        //leftLabels[0].setText("boids velocity", dontSendNotification);
         leftLabels[0].setText("boids view", dontSendNotification);
         leftLabels[1].setText("boids recklessness", dontSendNotification);
         leftLabels[2].setText("sustain", dontSendNotification);

@@ -200,15 +200,17 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     }
     if (paramID == Parameters::nameSustain)
     {
-        sustainReduction = 2.01f - newValue;
+        sustainReduction = 1.01f - newValue;
     }
     if(paramID == Parameters::nameHighOctave)
     {
+        DBG(newValue - std::abs(piano.getLowOctave()));
         piano.setHighOct(newValue);
         piano.updatePianoTonality();
     }
     if (paramID == Parameters::nameLowOctave)
     {
+        DBG(piano.getHighOctave() - std::abs(newValue));
         piano.setLowOct(newValue);
         piano.updatePianoTonality();
     }
