@@ -98,8 +98,7 @@ public:
  
         settings.setBounds(area.getX()-5, area.getY()-10, 120, 40);
 
-
-        octaveSlider.setBounds(area.getWidth() - 130, area.getY()+7, 120, 15);
+        octaveSlider.setBounds(area.getWidth() - 140, area.getY()+7, 120, 12);
 
         octaveSlider.setMinAndMaxValues(piano->getLowOctave(), piano->getHighOctave(), dontSendNotification);
     }
