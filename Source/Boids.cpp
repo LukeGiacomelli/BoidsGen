@@ -26,7 +26,6 @@ Boids::Boids(Rectangle<int>& s, float& default_speed_source, float& max_speed_so
     position = Eigen::Vector2f(rnd_x, rnd_y);
 
     weight = 1;
-    colour = Colour((uint8)121, (uint8)183, (uint8)145);
     acceleration = Eigen::Vector2f(0, 0);
     velocity = Eigen::Vector2f(rnd.nextFloat() * 2 - 1, rnd.nextFloat() * 2 - 1) * default_speed;
     maxForce = max_force;
@@ -205,7 +204,7 @@ void Boids::alignementBias(float probability)
 {
     if (rnd.nextFloat() < probability) 
     {
-        // variazioni casuali tra -jitterAmount e +jitterAmount
+        //Variazioni casuali tra -jitterAmount e +jitterAmount
         float varAmount = boids_jitter;
 
         float varX = (rnd.nextFloat() * 2.0f - 1.0f) * varAmount;
@@ -255,7 +254,6 @@ bool Boids::borders()
 {
     bool avoiding = false;
 
-    //Using velocity
     if (screenBounds != Rectangle<int>())
     {
         auto turning_factor = default_turning_factor;

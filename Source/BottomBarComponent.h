@@ -72,14 +72,18 @@ public:
 
                 if (octaveSlider.getMaxValue() - octaveSlider.getMinValue() >= 1 && octaveSlider.getMaxValue() - octaveSlider.getMinValue() < MAX_OCTAVE_RANGE)
                     octaveSlider.setMinValue(v, dontSendNotification);
-            }, nullptr);
+            }, 
+            nullptr
+        );
         hiAttachment = std::make_unique <ParameterAttachment>(*hiParameter, [this, hiParameter](float newValue)
             {
                 const auto v = hiParameter->convertFrom0to1(newValue);
 
                 if (octaveSlider.getMaxValue() - octaveSlider.getMinValue() >= 1 && octaveSlider.getMaxValue() - octaveSlider.getMinValue() < MAX_OCTAVE_RANGE)
                     octaveSlider.setMaxValue(v, dontSendNotification);
-            }, nullptr);
+            }, 
+            nullptr
+        );
 
         addAndMakeVisible(octaveSlider);
         addAndMakeVisible(settings);
@@ -98,8 +102,7 @@ public:
  
         settings.setBounds(area.getX()-5, area.getY()-10, 120, 40);
 
-
-        octaveSlider.setBounds(area.getWidth() - 130, area.getY()+7, 120, 15);
+        octaveSlider.setBounds(area.getWidth() - 140, area.getY()+7, 120, 12);
 
         octaveSlider.setMinAndMaxValues(piano->getLowOctave(), piano->getHighOctave(), dontSendNotification);
     }

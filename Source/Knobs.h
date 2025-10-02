@@ -13,7 +13,7 @@ public:
     {
         leftLabels[0].setText("boids view", dontSendNotification);
         leftLabels[1].setText("boids recklessness", dontSendNotification);
-        leftLabels[2].setText("sustain", dontSendNotification);
+        leftLabels[2].setText("notes persistence", dontSendNotification);
         leftLabels[3].setText("avoid non-tonality", dontSendNotification);
 
         rightLabels[0].setText("separation force", dontSendNotification);

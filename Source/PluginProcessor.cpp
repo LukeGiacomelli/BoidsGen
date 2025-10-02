@@ -34,6 +34,7 @@ MidiBoidsAudioProcessor::~MidiBoidsAudioProcessor()
 void MidiBoidsAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     sr = sampleRate;
+    invSr = 1 / sr;
     blockSize = samplesPerBlock;
     blockPerSecond = sr / blockSize;
     updateInterval = blockPerSecond / update_per_second;
@@ -53,7 +54,7 @@ void MidiBoidsAudioProcessor::releaseResources()
 void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     buffer.clear();
-    auto now = iteration_counter * (buffer.getNumSamples() / sr); //Tempo di esecuzione approssimato
+    auto now = iteration_counter * (buffer.getNumSamples() * invSr); //Tempo di esecuzione approssimato
 
     //Boids manager
     if (iteration_counter % updateInterval == 0) 
@@ -89,11 +90,14 @@ void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
             //Variazioni di rotta casuale se non in un gruppo (prob)
             if (alignment == Vector2f(0, 0)) b->alignementBias(boidsBias);
 
-            auto allForces = separationForce + alignmentForce + cohesionForce;
-            b->applyForce((separation + alignment + cohesion) / (allForces ? allForces : 1));
+            auto allForces = separationForce + alignmentForce + cohesionForce + tonalityAvoidingForce + tonalityFollowingForce;
+            b->applyForce((separation + alignment + cohesion + avoidNonTonality + followTonality) / (allForces ? allForces : 1));
 
-            auto tonForce = tonalityAvoidingForce + tonalityFollowingForce;
-            b->applyForce((avoidNonTonality + followTonality) / (tonForce ? tonForce : 1));
+            //auto tonForce = tonalityAvoidingForce + tonalityFollowingForce;
+            //b->applyForce((avoidNonTonality + followTonality) / (tonForce ? tonForce : 1));
+
+            //auto allForces = separationForce + alignmentForce + cohesionForce;
+            //b->applyForce((separation + alignment + cohesion) / (allForces ? allForces : 1));
 
             if (iteration_counter % updateInterval * 2 == 0) b->checkForNotes(pianoPosition, *areasCollection, now);
 
@@ -230,13 +234,14 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     {
         piano.useAutoThreshold(newValue);
     }
-    if(paramID == Parameters::nameBoidsBias)
+    if(paramID == Parameters::nameBoidsJitter)
     {
         boidsBias = newValue;
     }
     if (paramID == Parameters::nameReset)
     {
         resetParameters();
+        boidsColor = Colour((uint8)121, (uint8)183, (uint8)145);
     }
     
 }

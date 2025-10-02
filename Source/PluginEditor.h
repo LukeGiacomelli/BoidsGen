@@ -41,14 +41,15 @@ private:
     AdvancedLookAndFeel advancedMenuLook;
 
     TooltipWindow ttw;
+    Colour& boidsColour = audioProcessor.getBoidsColour();
 
     Piano* piano = audioProcessor.getPiano();
 
     TopBarComponent menu{ parameters };
-    AdvancedMenu advancedMenu{ parameters , newLook};
+    AdvancedMenu advancedMenu{ parameters , newLook, boidsColour};
     BottomBar bottomMenu{ parameters, piano , &advancedMenu, newLook};
     PianoDrawer pd{ piano, menu.getPianoButton() };
-    BoidsDrawer boid_scene{ audioProcessor.getBoids(), audioProcessor.getActiveBoids()};
+    BoidsDrawer boid_scene{ audioProcessor.getBoids(), audioProcessor.getActiveBoids(), boidsColour};
     Knobs knobsLayout{ parameters};
 
     void hideUI();

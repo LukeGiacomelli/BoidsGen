@@ -37,7 +37,6 @@ public:
     void applyForce(const Vector2f& force);
     bool borders();
     float angle(const Vector2f& v);
-    bool inTheFov(Vector2f current_direction, float rangeOfView);
     Vector2f limitVector(Vector2f vector);
 
     //Set
@@ -49,7 +48,6 @@ public:
     Vector2f getPosition() const { return position; }
     Vector2f getVelocity() const { return velocity; }
     Vector2f getAcceleration() const { return acceleration; }
-    Colour getColour() const { return colour; }
     float getRange() const { return range; }
     float getWeight() const { return weight; }
     float getSize() const { return size; }
@@ -70,7 +68,6 @@ private:
 
     float weight;
     float& range;
-    Colour colour;
     float size;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Boids)

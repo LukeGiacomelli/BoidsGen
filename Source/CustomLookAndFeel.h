@@ -41,7 +41,7 @@ public:
         minSliderPos = maxSliderPos - minSliderPos <= MIN_SLIDER_GAP || maxSliderPos - minSliderPos > MAX_SLIDER_GAP ? safeMin : minSliderPos;
         maxSliderPos = maxSliderPos - minSliderPos <= MIN_SLIDER_GAP || maxSliderPos - minSliderPos > MAX_SLIDER_GAP ? safeMax : maxSliderPos;
 
-        g.setColour(Colour(50, 55, 59));
+        g.setColour(Colour::fromString("0xFF#3e3e3e"));
 
         g.drawLine(x, y, x, y + height);
         g.drawLine(x + width, y, x + width, y + height);

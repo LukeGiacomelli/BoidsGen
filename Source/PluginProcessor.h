@@ -30,6 +30,7 @@ public:
     std::vector<std::unique_ptr<Boids>>& getBoids() { return boids; }
     int& getActiveBoids() { return activeBoids; }
     Piano* getPiano() { return &piano; }
+    Colour& getBoidsColour() { return boidsColor; }
 
     //==============================================================================
     bool MidiBoidsAudioProcessor::hasEditor() const { return true; }
@@ -53,6 +54,7 @@ public:
 private:
     int iteration_counter = 0;
     double sr = 44100;
+    double invSr = 2.676;
     int blockSize = 512;
     int blockPerSecond = 0;
     int updateInterval = 3;
@@ -62,6 +64,7 @@ private:
     int numberOfNotesPressed = 0;
     std::vector<std::vector<Area>>* areasCollection;
     int activeBoids = Parameters::defaultBoidsNumber;
+    Colour boidsColor = Colour((uint8)121, (uint8)183, (uint8)145);
 
     float default_speed = Parameters::defaultBoidsRecklessness;
     float default_view = Parameters::defaultBoidsView;
@@ -88,7 +91,7 @@ private:
     float cohesionForce = Parameters::defaultCohesion;
     float tonalityAvoidingForce = Parameters::defaultAvoidTonality;
     float tonalityFollowingForce = Parameters::defaultFollowTonality;
-    float boidsBias = Parameters::defaultBoidsBias;
+    float boidsBias = Parameters::defaultBoidsJitter;
 
     String selectedScale = "Cmaj";
     float sustainReduction = Parameters::defaultSustain;
