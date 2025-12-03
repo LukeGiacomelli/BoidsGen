@@ -31,6 +31,8 @@ public:
     int& getActiveBoids() { return activeBoids; }
     Piano* getPiano() { return &piano; }
     Colour& getBoidsColour() { return boidsColor; }
+    Colour& getBgColour() { return bgColor; }
+    float& getBoidsSize() { return boidsSize; }
 
     //==============================================================================
     bool MidiBoidsAudioProcessor::hasEditor() const { return true; }
@@ -64,7 +66,9 @@ private:
     int numberOfNotesPressed = 0;
     std::vector<std::vector<Area>>* areasCollection;
     int activeBoids = Parameters::defaultBoidsNumber;
+    float boidsSize = 7.f;
     Colour boidsColor = Colour((uint8)121, (uint8)183, (uint8)145);
+    Colour bgColor = Colour((uint8)249, (uint8)249, (uint8)249);
 
     float default_speed = Parameters::defaultBoidsRecklessness;
     float default_view = Parameters::defaultBoidsView;

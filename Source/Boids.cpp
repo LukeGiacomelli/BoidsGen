@@ -74,7 +74,7 @@ Vector2f Boids::separation(const std::vector<Boids*>& b)
         if (dist > 0 && dist < separation_range) {
             auto dist = distance(a->getPosition(), position);
             Vector2f diff = position - a->getPosition();
-            diff.normalize();
+            //diff.normalize();
             diff /= dist; //Divido in modo da ottenere per distanze minori diff maggiori!
             steer += diff;
             ++number_of_collision;

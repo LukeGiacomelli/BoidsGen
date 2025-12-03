@@ -93,12 +93,6 @@ void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
             auto allForces = separationForce + alignmentForce + cohesionForce + tonalityAvoidingForce + tonalityFollowingForce;
             b->applyForce((separation + alignment + cohesion + avoidNonTonality + followTonality) / (allForces ? allForces : 1));
 
-            //auto tonForce = tonalityAvoidingForce + tonalityFollowingForce;
-            //b->applyForce((avoidNonTonality + followTonality) / (tonForce ? tonForce : 1));
-
-            //auto allForces = separationForce + alignmentForce + cohesionForce;
-            //b->applyForce((separation + alignment + cohesion) / (allForces ? allForces : 1));
-
             if (iteration_counter % updateInterval * 2 == 0) b->checkForNotes(pianoPosition, *areasCollection, now);
 
             b->update();
@@ -107,7 +101,7 @@ void MidiBoidsAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         //Resetto le pedane
         auto reduction = 0.f;
         if (!piano.getAutoThreshold())
-            reduction = std::max(0.25f, std::min(piano.getThreshold() / 2, piano.getThreshold() / 5)) * sustainReduction;
+            reduction = std::max(0.25f, piano.getThreshold() / 5) * sustainReduction;
         else
             reduction = std::max(0.05f, std::min(activeBoids * 0.025f, 25.f)) * sustainReduction;
 
@@ -204,17 +198,15 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     }
     if (paramID == Parameters::nameSustain)
     {
-        sustainReduction = 1.01f - newValue;
+        sustainReduction = 0.91f - newValue;
     }
     if(paramID == Parameters::nameHighOctave)
     {
-        DBG(newValue - std::abs(piano.getLowOctave()));
         piano.setHighOct(newValue);
         piano.updatePianoTonality();
     }
     if (paramID == Parameters::nameLowOctave)
     {
-        DBG(piano.getHighOctave() - std::abs(newValue));
         piano.setLowOct(newValue);
         piano.updatePianoTonality();
     }
@@ -238,12 +230,17 @@ void MidiBoidsAudioProcessor::parameterChanged(const String& paramID, float newV
     {
         boidsBias = newValue;
     }
+    if (paramID == Parameters::nameBoidsSize)
+    {
+        boidsSize = newValue;
+    }
     if (paramID == Parameters::nameReset)
     {
         resetParameters();
+
         boidsColor = Colour((uint8)121, (uint8)183, (uint8)145);
+        bgColor = Colour::fromString("0xfff9f9f9");
     }
-    
 }
 
 //==============================================================================

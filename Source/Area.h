@@ -36,7 +36,7 @@ public:
     { 
         //Threshold automatiche o meno...
         if (autoThreshold)
-            threshold = std::max(0.5f, std::min(numberOfBoids * 0.07f, 125.f)); //5% dei boidi totali o ...
+            threshold = std::max(0.5f, std::min(numberOfBoids * 0.1f, 125.f)); //7% dei boidi totali o ...
         else
             threshold = externalThreshold;
 
@@ -64,7 +64,8 @@ public:
         if (peso >=  threshold && !activated && rested >= 0.1f)
         {
             auto chargedIn = now - lastSleep;
-            auto velocity = jmax(1.1f - jmap<float>(chargedIn, 0.f, 1.f, 0.1f, 1.f),0.1f);
+            //auto velocity = jmax(1.1f - jmap<float>(chargedIn, 0.f, 1.f, 0.1f, 1.f),0.1f);
+            auto velocity = 1.1f - jlimit(0.1f, 1.f, chargedIn);
             midiManager.addNote(nota.getMidiNote(), true, velocity); 
             activated = true;
             lastActivated = now;

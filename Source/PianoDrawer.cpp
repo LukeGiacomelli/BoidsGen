@@ -58,7 +58,7 @@ void PianoDrawer::resized()
     {
         for (auto& a : r)
         {
-            areasComponent[counter]->setBounds(a.getAreaBounds());
+            areasComponent[counter]->setBounds(a.getAreaBounds()); //Potrei utilizzare areasComponent[counter].getArea().getAreaBouds()
             ++counter;
         }
     }

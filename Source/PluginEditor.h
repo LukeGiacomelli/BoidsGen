@@ -42,14 +42,15 @@ private:
 
     TooltipWindow ttw;
     Colour& boidsColour = audioProcessor.getBoidsColour();
+    Colour& bgColour = audioProcessor.getBgColour();
 
     Piano* piano = audioProcessor.getPiano();
 
     TopBarComponent menu{ parameters };
-    AdvancedMenu advancedMenu{ parameters , newLook, boidsColour};
+    AdvancedMenu advancedMenu{ parameters , newLook, boidsColour, bgColour};
     BottomBar bottomMenu{ parameters, piano , &advancedMenu, newLook};
     PianoDrawer pd{ piano, menu.getPianoButton() };
-    BoidsDrawer boid_scene{ audioProcessor.getBoids(), audioProcessor.getActiveBoids(), boidsColour};
+    BoidsDrawer boid_scene{ audioProcessor.getBoids(), audioProcessor.getActiveBoids(), boidsColour, audioProcessor.getBoidsSize()};
     Knobs knobsLayout{ parameters};
 
     void hideUI();

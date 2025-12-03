@@ -21,6 +21,7 @@ namespace Parameters
 	static const String nameThreshold = "TH";
 	static const String nameAutoThreshold = "ATHR";
 	static const String nameBoidsJitter = "BJ";
+	static const String nameBoidsSize = "BS";
 	static const String nameReset = "R";
 
 	static const float defaultSeparation = 2.5f;
@@ -41,6 +42,7 @@ namespace Parameters
 	static const float defaultThreshold = -1.f;
 	static const bool defaultAutoThreshold = true;
 	static const float defaultBoidsJitter = 0.2f;
+	static const float defaultBoidsSize = 7.f;
 	static const int defaultReset = 0;
 
 	const StringArray scaleNames = {
@@ -95,19 +97,20 @@ namespace Parameters
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameAlignment), "alignment force", NormalisableRange(0.f, 5.f, 0.01f), defaultAlignment));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameCohesion), "cohesion force", NormalisableRange(0.f, 5.f, 0.01f), defaultCohesion));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameAvoidTonality), "avoid non-tonality", NormalisableRange(0.f, 5.f, 0.01f), defaultAvoidTonality));
-		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameFollowTonality), "follow tonality", NormalisableRange(0.f, 5.f, 0.01f), defaultFollowTonality));
+		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameFollowTonality), "follow tonality", NormalisableRange(0.f, 3.f, 0.01f), defaultFollowTonality));
 		params.push_back(std::make_unique<AudioParameterChoice>(ParameterID(nameSelectedScale), "Selected scale", scaleNames, defaultSelectedScale));
 		params.push_back(std::make_unique<AudioParameterChoice>(ParameterID(nameSelectedTonic), "Selected tonic", notes, defaultSelectedTonic));
 		params.push_back(std::make_unique<AudioParameterBool>(ParameterID(nameSelectedPiano), "Selected piano", defaultSelectedPiano));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsRecklessness), "boids recklessness", NormalisableRange(0.5f, 4.5f, 0.01f), defaultBoidsRecklessness));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsMaxSpeed), "boids max-speed", NormalisableRange(1.4f, 7.5f, 0.1f), defaultBoidsMaxSpeed));
-		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameSustain), "note persistence", NormalisableRange(0.001f, 1.f, 0.25f), defaultSustain));
+		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameSustain), "note persistence", NormalisableRange(0.001f, 0.9f, 0.25f), defaultSustain));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameHighOctave), "high octave", NormalisableRange(-1.f, 8.f, 1.f), defaultHighOctave));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameLowOctave), "low octave", NormalisableRange(-1.f, 8.f, 1.f), defaultLowOctave));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsView), "boids view", NormalisableRange(40.f, 150.f, 1.f,0.8f, false), defaultBoidsView));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsNumber), "boids number", NormalisableRange(1.f, 2500.f, 5.f), defaultBoidsNumber));
-		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameThreshold), "threshold", NormalisableRange(1.f, 1000.f, 5.f), defaultThreshold));
+		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameThreshold), "threshold", NormalisableRange(5.f, 1000.f, 5.f), defaultThreshold));
 		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsJitter), "boids jitter", NormalisableRange(0.f, 1.f, 0.1f), defaultBoidsJitter));
+		params.push_back(std::make_unique<AudioParameterFloat>(ParameterID(nameBoidsSize), "boids size", NormalisableRange(5.f, 100.f, 1.f), defaultBoidsSize));
 		params.push_back(std::make_unique<AudioParameterBool>(ParameterID(nameAutoThreshold), "auto threshold", defaultAutoThreshold));
 		params.push_back(std::make_unique<AudioParameterBool>(ParameterID(nameReset), "reset", defaultReset));
 
@@ -125,6 +128,5 @@ namespace Parameters
 			valueTreeState.addParameterListener(id, listener);
 		}
 	}
-
 
 }

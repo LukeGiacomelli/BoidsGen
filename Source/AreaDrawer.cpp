@@ -31,7 +31,7 @@ void AreaDrawer::paint(Graphics& g)
 
         //Bordo area nota
         //g.setColour(Colour(74, 88, 89));
-        //g.drawEllipse(getLocalBounds().getX(), getLocalBounds().getY(), getLocalBounds().getWidth(), getLocalBounds().getHeight(), 0.9f);
+        //g.drawEllipse(getLocalBounds().getX(), getLocalBounds().getY(), getLocalBounds().getWidth(), getLocalBounds().getHeight(), 0.8f);
 
         //Active notes
         g.setColour(inSelectedTonality ? Colour(0xffffc759).withAlpha(0.3f) : Colour(0xffffc759).withAlpha(0.f));

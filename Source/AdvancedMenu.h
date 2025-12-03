@@ -12,8 +12,8 @@ typedef AudioProcessorValueTreeState::ButtonAttachment buttonAttachment;
 class AdvancedMenu : public Component, private ChangeListener
 {
 public:
-	AdvancedMenu(AudioProcessorValueTreeState& vts, CustomLookAndFeel& lf, Colour& bc)
-		: parameters(vts), look(lf), boidsColor(bc)
+	AdvancedMenu(AudioProcessorValueTreeState& vts, CustomLookAndFeel& lf, Colour& bc, Colour& bgc)
+		: parameters(vts), look(lf), boidsColor(bc), bgColor(bgc)
 	{
 		//Close button
 		Image closeImg = ImageCache::getFromMemory(BinaryData::CloseWindowicon_png, BinaryData::CloseWindowicon_pngSize);
@@ -97,15 +97,15 @@ public:
 		biasLabel.attachToComponent(&jitterSlider, true);
 
 		//Boids colours
-		colorPicker.setColour(TextButton::buttonColourId, boidsColor);
-		colorPickerLabel.setText("Boids colour: ", dontSendNotification);
-		colorPickerLabel.attachToComponent(&colorPicker, true);
-		colorPicker.onClick = [this]() {
+		boidsColorPicker.setColour(TextButton::buttonColourId, boidsColor);
+		boidsColorPickerLabel.setText("Boids colour: ", dontSendNotification);
+		boidsColorPickerLabel.attachToComponent(&boidsColorPicker, true);
+		boidsColorPicker.onClick = [this]() {
 			auto selector = std::make_unique<ColourSelector>();
 			selector->setCurrentColour(boidsColor);
 			selector->setBounds(0, 0, 450, 420);
 			selector->addChangeListener(this);
-			selectorPtr = selector.get();
+			boidsSelectorPtr = selector.get();
 
 			//Apre il selector in un pop-up
 			CallOutBox::launchAsynchronously(
@@ -114,8 +114,38 @@ public:
 				nullptr
 			);
 
-			colorPicker.setColour(TextButton::buttonColourId, boidsColor);
+			boidsColorPicker.setColour(TextButton::buttonColourId, boidsColor);
 		};
+
+		//Bg colours
+		bgColorPicker.setColour(TextButton::buttonColourId, bgColor);
+		bgColorPickerLabel.setText("Background colour: ", dontSendNotification);
+		bgColorPickerLabel.attachToComponent(&bgColorPicker, true);
+		bgColorPicker.onClick = [this]() {
+			auto selector = std::make_unique<ColourSelector>();
+			selector->setCurrentColour(bgColor);
+			selector->setBounds(0, 0, 450, 420);
+			selector->addChangeListener(this);
+			bgSelectorPtr = selector.get();
+
+			//Apre il selector in un pop-up
+			CallOutBox::launchAsynchronously(
+				std::move(selector),
+				getScreenBounds(),
+				nullptr
+			);
+
+			bgColorPicker.setColour(TextButton::buttonColourId, bgColor);
+		};
+
+		//Boids size
+		boidsSizeSlider.setSliderStyle(Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+		boidsSizeSlider.setRotaryParameters(0.0f, MathConstants<float>::twoPi, true);
+		boidsSizeSlider.setMouseDragSensitivity(rotatorySliderMouseSens);
+		boidsSizeAttachment.reset(new sliderAttachment(parameters, Parameters::nameBoidsSize, boidsSizeSlider));
+
+		boidsSizeLabel.setText("Boids size: ", dontSendNotification);
+		boidsSizeLabel.attachToComponent(&boidsSizeSlider, true);
 
 		//Reset parameters
 		Image resetImg = ImageCache::getFromMemory(BinaryData::reset_png, BinaryData::reset_pngSize);
@@ -152,18 +182,27 @@ public:
 		addAndMakeVisible(jitterSlider);
 		addAndMakeVisible(biasLabel);
 		addAndMakeVisible(resetParameters);
-		addAndMakeVisible(colorPickerLabel);
-		addAndMakeVisible(colorPicker);
+		addAndMakeVisible(boidsColorPickerLabel);
+		addAndMakeVisible(boidsColorPicker);
+		addAndMakeVisible(bgColorPickerLabel);
+		addAndMakeVisible(bgColorPicker);
+		addAndMakeVisible(boidsSizeSlider);
+		addAndMakeVisible(boidsSizeLabel);
 		addAndMakeVisible(resetLabel);
 		//addAndMakeVisible(credits);
 	}
 
 	void changeListenerCallback(ChangeBroadcaster* source) override
 	{
-		if (source == selectorPtr)
+		if (source == boidsSelectorPtr)
 		{
-			boidsColor = selectorPtr->getCurrentColour();
-			colorPicker.setColour(TextButton::buttonColourId, boidsColor);
+			boidsColor = boidsSelectorPtr->getCurrentColour();
+			boidsColorPicker.setColour(TextButton::buttonColourId, boidsColor);
+		} 
+		else if (source == bgSelectorPtr)
+		{
+			bgColor = bgSelectorPtr->getCurrentColour();
+			bgColorPicker.setColour(TextButton::buttonColourId, bgColor);
 		}
 	}
 
@@ -185,7 +224,9 @@ public:
 		thrSlider.setBounds(area.getX() + 270, area.getY()+35, 30, 30);
 		autoThresh.setBounds(area.getX() + 310, area.getY()+38, 45, 25);
 		jitterSlider.setBounds(area.getX() + 500, area.getY(), 30, 30);
-		colorPicker.setBounds(area.getX() + 480, area.getY() + 38, 30, 30);
+		boidsColorPicker.setBounds(area.getX() + 480, area.getY() + 38, 30, 30);
+		bgColorPicker.setBounds(area.getX() + 685, area.getY(), 30, 30);
+		boidsSizeSlider.setBounds(area.getX() + 600, area.getY() + 38, 30, 30);
 		resetParameters.setBounds(area.getWidth() - 10, area.getHeight() + 10, 25, 25);
 
 		//credits.setBounds(area.getWidth() - 130, area.getHeight() + 10, 150, 25);
@@ -196,19 +237,22 @@ public:
 private:
 	CustomLookAndFeel& look;
 	Colour& boidsColor;
-	ColourSelector* selectorPtr = nullptr;
+	Colour& bgColor;
+	ColourSelector* boidsSelectorPtr = nullptr;
+	ColourSelector* bgSelectorPtr = nullptr;
 
-	Label hideUILabel, boidsNumber, maxSpeedLabel, thrLabel, biasLabel, credits, resetLabel, colorPickerLabel;
+	Label hideUILabel, boidsNumber, maxSpeedLabel, thrLabel, biasLabel, credits, resetLabel, boidsColorPickerLabel, bgColorPickerLabel, boidsSizeLabel;
 	ImageButton closeBtn, hideUI, resetParameters;
 	ToggleButton autoThresh;
-	TextButton colorPicker;
+	TextButton boidsColorPicker, bgColorPicker;
 
-	Slider boidsNumberSlider, max_speed, thrSlider, jitterSlider;
+	Slider boidsNumberSlider, max_speed, thrSlider, jitterSlider, boidsSizeSlider;
 
 	std::unique_ptr<sliderAttachment> bnAttachment;
 	std::unique_ptr<sliderAttachment> thrAttachment;
 	std::unique_ptr<sliderAttachment> msAttachment;
 	std::unique_ptr<sliderAttachment> jitterAttachment;
+	std::unique_ptr<sliderAttachment> boidsSizeAttachment;
 	std::unique_ptr<buttonAttachment> autoThrAttachment;
 	std::unique_ptr<buttonAttachment> resetAttachment;
 

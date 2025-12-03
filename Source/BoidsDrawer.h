@@ -15,7 +15,7 @@
 class BoidsDrawer : public Component, public Timer
 {
 public:
-    BoidsDrawer(std::vector<std::unique_ptr<Boids>>& b, int& _activeBoids, Colour& boidsColor);
+    BoidsDrawer(std::vector<std::unique_ptr<Boids>>& b, int& _activeBoids, Colour& boidsColor, float& bs);
     ~BoidsDrawer() {};
 
     void paint(Graphics& g) override;
@@ -23,6 +23,7 @@ public:
     void resized() override;
 private:
     std::vector<Boids*> boids;
+    float& boids_size;
     Colour& bc;
     Image boidImage;
     int& activeBoids;

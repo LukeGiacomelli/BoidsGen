@@ -40,7 +40,7 @@ MidiBoidsAudioProcessorEditor::~MidiBoidsAudioProcessorEditor()
 //==============================================================================
 void MidiBoidsAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.fillAll(Colour::fromString("0xfff9f9f9"));
+    g.fillAll(bgColour);
 }
 
 void MidiBoidsAudioProcessorEditor::resized() 
